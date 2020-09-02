@@ -18,6 +18,10 @@ HPCParallelPattern::HPCParallelPattern(DesignSpace DesignSp, std::string Pattern
 	this->Occurrences = std::vector<PatternOccurrence*>();
 }
 
+void HPCParallelPattern::Accept(HPCParallelPatternVisitor* Visitor){
+	Visitor -> HandleParallelPattern(this);
+}
+
 /**
  * @brief Prints design space, pattern name and number of occurrences.
  **/
@@ -120,6 +124,10 @@ PatternOccurrence::PatternOccurrence(HPCParallelPattern* Pattern, std::string ID
 	this->ID = ID;
 }
 
+void PatternOccurrence::Accept(PatternOccurrenceVisitor* Visitor){
+	Visitor -> HandlePatternOccurrence(this);
+}
+
 /**
  * @brief Get the lines of code for all PatternCodeRegion objects registered with this PatternOccurrence.
  *
@@ -179,6 +187,10 @@ PatternCodeRegion::~PatternCodeRegion(){std::cout << "Deleted CodeRegion" << '\n
 PatternCodeRegion::PatternCodeRegion(PatternOccurrence* PatternOcc) : PatternGraphNode(GNK_Pattern), Parents(), Children()
 {
 	this->PatternOcc = PatternOcc;
+}
+
+void PatternCodeRegion::Accept(PatternGraphNodeVisitor* Visitor){
+	Visitor -> HandlePatternCodeRegion(this);
 }
 
 void PatternCodeRegion::AddChild(PatternGraphNode* Child)

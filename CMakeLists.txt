@@ -8,10 +8,18 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
-
 set (CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wall -Wextra")
+set (CMAKE_BUILD_TYPE Debug)
 
-set (CLANG_INCLUDE_DIR "/rwthfs/rz/SW/UTIL/clang/7.0.0/lib64/clang/7.0.0" CACHE STRING
+set (SOURCES_DIR ${PROJECT_SOURCE_DIR}/src)
+set (HEADERS_DIR ${PROJECT_SOURCE_DIR}/include)
+
+########################################################################
+#                                                                      #
+#  Import Clang + Dependencies                                         #
+#                                                                      #
+########################################################################
+set (CLANG_INCLUDE_DIR "/usr/lib/clang/9.0.1" CACHE STRING
 	"Directory where the clang system library header files are located")
 add_definitions (-DCLANG_INCLUDE_DIR="${CLANG_INCLUDE_DIR}")
 
@@ -35,13 +43,14 @@ include(AddLLVM)
 set(LLVM_ENABLE_EH ON)
 message(STATUS "LLVM_ENABLE_EH: ${LLVM_ENABLE_EH}")
 
-include_directories(${CLANG_INCLUDE_DIRS} ${LLVM_INCLUDE_DIRS})
+include_directories(SYSTEM ${CLANG_INCLUDE_DIRS} ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS} ${CLANG_DEFINITIONS})
-set(CMAKE_BUILD_TYPE Debug)
 
-add_llvm_executable (HPC-pattern-tool HPCPatternTool.cpp HPCPatternInstrASTTraversal.cpp HPCParallelPattern.cpp HPCPatternInstrHandler.cpp TreeVisualisation.cpp HPCPatternStatistics.cpp Helpers.cpp SimilarityMetrics.cpp PatternGraph.cpp DesignSpaces.cpp HPCRunningStats.cpp ToolInformation.cpp HPCError.cpp)
-target_compile_options(HPC-pattern-tool
-  PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fexceptions >
-	PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti >
-)
-target_link_libraries (HPC-pattern-tool PUBLIC ${llvm_libs} clangBasic clangTooling)
+########################################################################
+#                                                                      #
+#  Build project                                                       #
+#                                                                      #
+########################################################################
+
+include_directories(${HEADERS_DIR})
+add_subdirectory(${SOURCES_DIR})

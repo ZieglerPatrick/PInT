@@ -19,6 +19,10 @@ FunctionNode::FunctionNode (std::string Name, unsigned Hash) : PatternGraphNode(
 	this->Hash = Hash;
 }
 
+void FunctionNode::Accept(PatternGraphNodeVisitor* Visitor){
+    Visitor -> HandleFunctionNode(this);
+}
+
 void FunctionNode::AddChild(PatternGraphNode* Child)
 {
 	Children.push_back(Child);

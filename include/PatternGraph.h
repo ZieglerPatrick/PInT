@@ -11,6 +11,8 @@
 #include <map>
 #include <iostream>
 
+#include "visitor/PatternGraphNodeVisitor.h"
+
 
 //#define TOOMANYBEGINSDEBUG
 
@@ -49,6 +51,16 @@ public:
 		this->ComponentID = -1;
 	}
 
+	/**
+	 * The entry point for the pattern visitor.
+	 * Modification of the original code to include visitors.
+	 *
+	 * @param Visitor an instance of the pattern visitor.
+	 * @since Sept. 2nd 2020
+	 * @author Patrick Ziegler
+	 */
+	virtual void Accept(PatternGraphNodeVisitor* Visitor) = 0;
+
 	virtual void AddChild(PatternGraphNode* Child) = 0;
 
 	virtual void AddParent(PatternGraphNode* Parent) = 0;
@@ -79,6 +91,16 @@ class FunctionNode : public PatternGraphNode
 {
 public:
 	FunctionNode (std::string Name, unsigned Hash);
+
+	/**
+	 * The entry point for the pattern visitor.
+	 * Modification of the original code to include visitors.
+	 *
+	 * @param Visitor an instance of the pattern visitor.
+	 * @since Sept. 2nd 2020
+	 * @author Patrick Ziegler
+	 */
+	virtual void Accept(PatternGraphNodeVisitor* Visitor);
 
 	void AddChild(PatternGraphNode* Child);
 

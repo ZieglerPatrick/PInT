@@ -10,7 +10,9 @@
 #include "DesignSpaces.h"
 #include "PatternGraph.h"
 
-
+#include "visitor/HPCParallelPatternVisitor.h"
+#include "visitor/PatternGraphNodeVisitor.h"
+#include "visitor/PatternOccurrenceVisitor.h"
 
 /* Forward declarations */
 class PatternOccurrence;
@@ -27,6 +29,16 @@ class HPCParallelPattern
 {
 public:
 	HPCParallelPattern(DesignSpace DesignSp, std::string PatternName);
+	
+	/**
+	 * The entry point for the pattern visitor.
+	 * Modification of the original code to include visitors.
+	 * 
+	 * @param Visitor an instance of the pattern visitor.
+	 * @since Sept. 2nd 2020
+	 * @author Patrick Ziegler
+	 */
+	void Accept(HPCParallelPatternVisitor* Visitor);
 
 	void Print();
 
@@ -73,6 +85,16 @@ class PatternOccurrence
 {
 public:
 	PatternOccurrence(HPCParallelPattern* Pattern, std::string ID);
+	
+	/**
+	 * The entry point for the pattern visitor.
+	 * Modification of the original code to include visitors.
+	 * 
+	 * @param Visitor an instance of the pattern visitor.
+	 * @since Sept. 2nd 2020
+	 * @author Patrick Ziegler
+	 */
+	void Accept(PatternOccurrenceVisitor* Visitor);
 
 	HPCParallelPattern* GetPattern() { return this->Pattern; }
 
@@ -108,6 +130,16 @@ class PatternCodeRegion : public PatternGraphNode
 public:
 	~PatternCodeRegion();
 	PatternCodeRegion(PatternOccurrence* PatternOcc);
+	
+	/**
+	 * The entry point for the pattern visitor.
+	 * Modification of the original code to include visitors.
+	 * 
+	 * @param Visitor an instance of the pattern visitor.
+	 * @since Sept. 2nd 2020
+	 * @author Patrick Ziegler
+	 */
+	void Accept(PatternGraphNodeVisitor* Visitor);
 
 	PatternOccurrence* GetPatternOccurrence() { return this->PatternOcc; }
 
