@@ -23,6 +23,8 @@
 #define PATTERN_BEGIN_CXX_FNNAME "Pattern_Begin"
 #define PATTERN_END_CXX_FNNAME "Pattern_End"
 
+#define PatternMap std::map<clang::CallExpr*, PatternCodeRegion*>
+
 #include "HPCPatternStatistics.h"
 
 /**
@@ -40,7 +42,45 @@ public:
 
 	bool VisitCallExpr(clang::CallExpr *CallExpr);
 
+	/**
+	 * Access point for the delegator visitor.
+	 * Modification of the original code to include the delegator visitor.
+	 *
+	 * @since Sept. 3nd 2020
+	 * @author Patrick Ziegler
+	 * @return a map containing all call expressions associated with the begin of a pattern.
+	 */
+	PatternMap GetPatternBegin();
+
+	/**
+	 * Access point for the delegator visitor.
+	 * Modification of the original code to include the delegator visitor.
+	 *
+	 * @since Sept. 3nd 2020
+	 * @author Patrick Ziegler
+	 * @return a map containing all call expressions associated with the end of a pattern.
+	 */
+	PatternMap GetPatternEnd();
 private:
+	/**
+	 * Hookpoint for the delegator visitor.<br>
+	 * Associates the being of a pattern with the corresponding {@link PatternCodeRegion}.<br>
+	 * Modification of the original code to include the delegator visitor.
+	 *
+	 * @since Sept. 3nd 2020
+	 * @author Patrick Ziegler
+	 */
+	PatternMap PatternBegin;
+	/**
+	 * Hookpoints for the delegator visitor.<br>
+	 * Associates the end of a pattern with the corresponding {@link PatternCodeRegion}.<br>
+	 * Modification of the original code to include the delegator visitor.
+	 *
+	 * @since Sept. 3nd 2020
+	 * @author Patrick Ziegler
+	 */
+	PatternMap PatternEnd;
+
 	clang::ASTContext *Context;
 
 	/**

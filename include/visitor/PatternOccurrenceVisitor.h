@@ -11,7 +11,6 @@ class PatternOccurrence;
  */
 class PatternOccurrenceVisitor : public HPCParallelPatternVisitor{
 	public:
-		virtual ~PatternOccurrenceVisitor();
 		virtual void VisitPatternOccurrence(PatternOccurrence* PatternOccurrence);
 		virtual void TraversePatternOccurrence(PatternOccurrence* PatternOccurrence);
 		virtual void EndVisitPatternOccurrence(PatternOccurrence* PatternOccurrence);

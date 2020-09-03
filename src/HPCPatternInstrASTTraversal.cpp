@@ -133,8 +133,9 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 
 
 				PatternCodeReg->isInMain = SourceMan.isInMainFile(LocStart);
-
 				LastNodeType = Pattern_Begin;
+
+				PatternBegin.emplace(CallExpr, PatternCodeReg);
 			}
 			else if (!FnName.compare(PATTERN_END_CXX_FNNAME) || !FnName.compare(PATTERN_END_C_FNNAME))
 			{
@@ -167,6 +168,8 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 				#ifdef LOCDEBUG
 					std::cout << "setted LineNumber of: "<< *EndNode->GetID()<<" to "<< SourceLoc.getLineNumber()<<" verification: "<<EndNode->getLineNumber()<< '\n';
 				#endif
+
+				PatternEnd.emplace(CallExpr, PatternCodeReg);
 			}
 			// If no: search the called function for patterns
 			else
@@ -237,6 +240,14 @@ HPCPatternInstrVisitor::HPCPatternInstrVisitor (clang::ASTContext* Context) : Co
 
 	PatternBeginFinder.addMatcher(StringArgumentMatcher, &PatternBeginHandler);
 	PatternEndFinder.addMatcher(StringArgumentMatcher, &PatternEndHandler);
+}
+
+PatternMap HPCPatternInstrVisitor::GetPatternBegin(){
+	return (PatternBegin);
+}
+
+PatternMap HPCPatternInstrVisitor::GetPatternEnd(){
+	return (PatternEnd);
 }
 
 Halstead* currentHlst;

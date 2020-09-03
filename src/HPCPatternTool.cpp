@@ -17,6 +17,7 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "llvm/Support/CommandLine.h"
 #include "clang/Tooling/ArgumentsAdjusters.h"
+#include "clang/DelegatorFrontendAction.h"
 
 #ifndef HPCERROR_H
 #include "HPCError.h"
@@ -154,7 +155,7 @@ int main (int argc, const char** argv)
 		/* Run the tool with options and source files provided */
 		int retcode = 0;
 		try{
-			retcode = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<HPCPatternInstrAction>().get());
+			retcode = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<DelegatorFrontendAction>().get());
 
       #ifdef DEBUG
         std::cout << "\nPrinting out DeclarationVector: " << std::endl;

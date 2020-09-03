@@ -16,7 +16,6 @@ class FunctionNode;
  */
 class PatternGraphNodeVisitor : public PatternOccurrenceVisitor{
 	public:
-		virtual ~PatternGraphNodeVisitor();
 		virtual void VisitPatternCodeRegion(PatternCodeRegion* Node);
 		virtual void TraversePatternCodeRegion(PatternCodeRegion* Node);
 		virtual void EndVisitPatternCodeRegion(PatternCodeRegion* Node);
