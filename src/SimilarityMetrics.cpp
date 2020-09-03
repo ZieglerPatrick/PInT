@@ -133,7 +133,7 @@ void SimilarityMeasure::VisitPatternGraphNode(PatternGraphNode* CurrentNode, Pat
  *
  * @return Input list clear of sequences that are longer than maxlength and shorter than minlength.
  **/
-std::vector<SimilarityMeasure::PatternSequence*> SimilarityMeasure::FilterSequencesByLength(std::vector<PatternSequence*> PatternSequences, int minlength, int maxlength)
+std::vector<SimilarityMeasure::PatternSequence*> SimilarityMeasure::FilterSequencesByLength(std::vector<PatternSequence*> PatternSequences, size_t minlength, size_t maxlength)
 {
 	std::vector<PatternSequence*> FilteredSequences;
 
@@ -224,7 +224,7 @@ void JaccardSimilarityStatistic::Print()
 
 	std::cout << "Outputlen: " << outputlen << " Similarities: " << this->Similarities.size() << std::endl;
 
-	for (int i = 0; i < std::min((ulong)outputlen, this->Similarities.size()); i++)
+	for (size_t i = 0; i < std::min((ulong)outputlen, this->Similarities.size()); i++)
 	{
 		this->Similarities.at(i)->Print();
 	}

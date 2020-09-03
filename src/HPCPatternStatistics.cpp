@@ -84,7 +84,7 @@ int CyclomaticComplexityStatistic::CountEdges(PatternGraphNode* Current)
 	int Edges = 0;
 
 	/* If we visit a pattern, add the incoming edge */
-	if (PatternCodeRegion* Pattern = clang::dyn_cast<PatternCodeRegion>(Current))
+	if (clang::dyn_cast<PatternCodeRegion>(Current) != NULL)
 	{
 		Edges = Edges + 1;
 	}
@@ -415,7 +415,6 @@ void FanInFanOutStatistic::FindChildPatterns(PatternCodeRegion* Start, std::vect
 
 
 Halstead::Halstead () {
-	int numOfOperators = 0;
 	//clang::tooling::runToolOnCode(new HalsteadClassAction, "main.cpp");
 }
 

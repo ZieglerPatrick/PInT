@@ -375,40 +375,40 @@ CallTreeNode* CallTree::registerEndNode(CallTreeNodeType NodeType, std::string i
 		Node = new CallTreeNode(NodeType, CorrespReg);
 	else
 		Node = new CallTreeNode(NodeType, identification);
+	#ifdef DEBUG
+		std::cout << "LastVisited = "<< LastVisited << '\n';
+	#endif
+	if(LastVisited == Function_Decl)
+	{
+		appendCallerToNode(surroundingFunc, Node);
 		#ifdef DEBUG
-			std::cout << "LastVisited = "<< LastVisited << '\n';
+			std::cout << "Last visited Functionsdeklaration von " <<surroundingFunc->GetHash()<< '\n';
 		#endif
-		if(LastVisited == Function_Decl)
+	}
+	else if(LastVisited == Pattern_Begin)
+	{
+		if(TopOfStack == NULL)
 		{
 			appendCallerToNode(surroundingFunc, Node);
 			#ifdef DEBUG
-				std::cout << "Last visited Functionsdeklaration von " <<surroundingFunc->GetHash()<< '\n';
+				std::cout << "Last visited " <<surroundingFunc->GetHash()<< " and Stack is empty!"<< '\n';
 			#endif
 		}
-		else if(LastVisited == Pattern_Begin)
+		else
 		{
-			if(TopOfStack == NULL)
-			{
-				appendCallerToNode(surroundingFunc, Node);
-				#ifdef DEBUG
-					std::cout << "Last visited " <<surroundingFunc->GetHash()<< " and Stack is empty!"<< '\n';
-				#endif
-			}
-			else
-			{
-				appendCallerToNode(TopOfStack, Node);
-				#ifdef DEBUG
-					std::cout << "TopOfStack not empty" << '\n';
-				#endif
-			}
+			appendCallerToNode(TopOfStack, Node);
 			#ifdef DEBUG
-				std::cout << "Last visited PatternCodeReg" << '\n';
+				std::cout << "TopOfStack not empty" << '\n';
 			#endif
 		}
 		#ifdef DEBUG
-			std::cout << "Last visited probably not set" << '\n';
+			std::cout << "Last visited PatternCodeReg" << '\n';
 		#endif
-		return Node;
+	}
+	#ifdef DEBUG
+		std::cout << "Last visited probably not set" << '\n';
+	#endif
+	return Node;
 }
 
 
@@ -771,8 +771,8 @@ bool CallTreeNode::isCalleeOf(CallTreeNode* Caller){
 		CallTreeNode* CalleeOfCaller = CalleeOfCallerPair.second;
 		if(this->compare(CalleeOfCaller))
 			return true;
-		return false;
 	}
+	return false;
 }
 
 void CallTreeNode::print(){
@@ -894,19 +894,18 @@ std::ostream& operator<<(std::ostream &os, Identification const &ident)
 
 std::ostream& operator<<(std::ostream &os, CallTreeNodeType const &NodeType)
 {
-	if(NodeType == Function){
-		return os << "Function";
-	}
-	if(NodeType == Pattern_Begin){
-		return os << "Pattern_Begin";
-	}
-	if(NodeType == Pattern_End){
-		return os << "Pattern_End";
-	}
-	if(NodeType == Function_Decl){
-		return os << "Function_Decl";
-	}
-	if(NodeType == Root){
-		return os << "Function_Decl (Root)";
+	switch(NodeType){
+		case Function:
+			return os << "Function";
+		case Pattern_Begin:
+			return os << "Pattern_Begin";
+		case Pattern_End:
+			return os << "Pattern_End";
+		case Function_Decl:
+			return os << "Function_Decl";
+		case Root:
+			return os << "Function_Decl (Root)";
+		default:
+			return os << "Unknown";
 	}
 }

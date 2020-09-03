@@ -117,7 +117,7 @@ int main (int argc, const char** argv)
 			analyseList = OptsParser.getSourcePathList();
 			std::cout << "ANALYZE LIST: " << '\n';
 
-			for(int i = 0; i  < analyseList.size(); i++){
+			for(size_t i = 0; i  < analyseList.size(); i++){
 				std::cout << analyseList[i] << std::endl;
 			}
 
@@ -131,7 +131,7 @@ int main (int argc, const char** argv)
 			std::cout << "COMPILATIONS LIST: "<<std::endl;
 			std::vector<std::string> d = (OptsParser.getCompilations()).getAllFiles();
 
-			for(int i = 0; i< d.size(); i++){
+			for(size_t i = 0; i< d.size(); i++){
 				std::cout << d[i] << std::endl;
 			}
 

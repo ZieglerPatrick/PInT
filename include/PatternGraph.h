@@ -280,11 +280,10 @@ public:
 	}
 
 private:
+	std::vector<FunctionNode*> Functions;
 	/* Save patterns, patternoccurrences and functions for later requests and linear access. */
 	std::vector<HPCParallelPattern*> Patterns;
 	std::vector<PatternOccurrence*> PatternOccurrences;
-
-	std::vector<FunctionNode*> Functions;
 
 	/* Designated root node for output in "Treeifyed" display */
 	PatternGraphNode* RootNode;

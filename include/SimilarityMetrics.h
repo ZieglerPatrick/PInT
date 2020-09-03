@@ -165,7 +165,7 @@ public:
 
 	std::vector<PatternSequence*> FindPatternSeqs(PatternCodeRegion* PatternNode, GraphSearchDirection dir, int maxdepth);
 
-	std::vector<PatternSequence*> FilterSequencesByLength(std::vector<PatternSequence*> Sequences, int minlength, int maxlength);
+	std::vector<PatternSequence*> FilterSequencesByLength(std::vector<PatternSequence*> Sequences, size_t minlength, size_t maxlength);
 
 protected:
 	std::vector<PatternSequence*> PatternSequences;
@@ -176,7 +176,7 @@ protected:
 
 	std::vector<HPCParallelPattern*> RootPatterns;
 
-	int maxlength;
+	size_t maxlength;
 
 	GraphSearchDirection dir;
 };

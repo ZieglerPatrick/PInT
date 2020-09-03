@@ -300,7 +300,6 @@ bool HalsteadVisitor::VisitCallExpr(clang::CallExpr *CallExpr){
 
 	std::vector<HPCParallelPattern*> isInPatterns;
 	IsStmtInAPatt(CallExpr, &isInPatterns);
-	clang::Decl* CalleeDecl = CallExpr->getCalleeDecl();
 	clang::SourceManager& SurMan = Context->getSourceManager();
 	if(SurMan.isInMainFile(CallExpr->getExprLoc())){
 		/*	CalleeDecl->dump();
@@ -411,7 +410,7 @@ bool HalsteadVisitor::VisitVarDecl(clang::VarDecl *VrDcl){
 		/*
 		countQual return the number of TypeQualifiers excluding the default qualifier */
 		for(HPCParallelPattern* Pat : isInPatterns){
-			for (size_t i = 0; i < numTypeQual; i++) {
+			for (int i = 0; i < numTypeQual; i++) {
 					Pat->incrementNumOfOperators();
 			}
 			/*is the variable mot only declared but also initialized, than we have one operator more
@@ -451,13 +450,13 @@ void HalsteadVisitor::IsStmtInAPatt(clang::Stmt *Stm, std::vector<HPCParallelPat
 	// WorkOccStackForHalstead is correctly initialized
 	clang::SourceManager& SourceMan = Context->getSourceManager();
 
-	for (int i = 0; i < WorkOccStackForHalstead.size(); i++){
+	for (size_t i = 0; i < WorkOccStackForHalstead.size(); i++){
 
 		PatternOccurrence* PatOcc = WorkOccStackForHalstead[i];
 		std::vector<PatternCodeRegion*> CodeRegions = PatOcc->GetCodeRegions();
 		getActualHalstead()->insertPattern(PatOcc->GetPattern());
 
-		for(int i = 0; i < CodeRegions.size(); i++){
+		for(size_t i = 0; i < CodeRegions.size(); i++){
 
 			PatternCodeRegion* CodeReg = CodeRegions[i];
 			bool ExprAfterBegStmt = SourceMan.isPointWithin (Stm->getEndLoc(),CodeReg->GetStartLoc(), CodeReg->GetEndLoc());
@@ -476,13 +475,13 @@ void HalsteadVisitor::IsStmtInAPatt(clang::Stmt *Stm, std::vector<HPCParallelPat
 
 			clang::SourceManager& SourceMan = Context->getSourceManager();
 
-			for (int i = 0; i < WorkOccStackForHalstead.size(); i++){
+			for (size_t i = 0; i < WorkOccStackForHalstead.size(); i++){
 
 				PatternOccurrence* PatOcc = WorkOccStackForHalstead[i];
 				std::vector<PatternCodeRegion*> CodeRegions = PatOcc->GetCodeRegions();
 				getActualHalstead()->insertPattern(PatOcc->GetPattern());
 
-				for(int i = 0; i < CodeRegions.size(); i++){
+				for(size_t i = 0; i < CodeRegions.size(); i++){
 
 					PatternCodeRegion* CodeReg = CodeRegions[i];
 					bool ExprAfterBegStmt = SourceMan.isPointWithin (Dcl->getLocation(),CodeReg->GetStartLoc(), CodeReg->GetEndLoc());
@@ -501,7 +500,7 @@ void HalsteadVisitor::IsStmtInAPatt(clang::Stmt *Stm, std::vector<HPCParallelPat
 			std::string typ = type.getAsString();
 
 			int wc = 0;
-			for(int i =0 ; i < typ.length(); i++){
+			for(size_t i =0 ; i < typ.length(); i++){
 				char actchar = typ[i];
 				if(!((actchar <= 'z' && actchar >= 'a') || (actchar <= 'Z' && actchar >= 'A') || (actchar == '_'))){
 					if(actchar == ' '){
@@ -524,10 +523,12 @@ void HalsteadVisitor::IsStmtInAPatt(clang::Stmt *Stm, std::vector<HPCParallelPat
 std::unique_ptr<clang::ASTConsumer> HPCPatternInstrAction::CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile)
 {
 	DEBUG_MESSAGE("Creating consumer object!")
+	static_cast<void>(InFile); //Avoid unused parameter warning
 	return std::unique_ptr<clang::ASTConsumer>(new HPCPatternInstrConsumer(&Compiler.getASTContext()));
 }
 
 std::unique_ptr<clang::ASTConsumer> HalsteadClassAction::CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile)
 {
+	static_cast<void>(InFile); //Avoid unused parameter warning
 	return std::unique_ptr<clang::ASTConsumer>(new HalsteadConsumer(&Compiler.getASTContext()));
 }
