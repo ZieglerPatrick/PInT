@@ -1,7 +1,5 @@
 #include "HPCRunningStats.h"
 
-Halstead* actualHal;
-
 /*CommandLine arguments */
 bool* notree;
 bool* relationtree;
@@ -11,14 +9,6 @@ bool* maxtreedisplaydepth;
 bool* displaycompilatonslist;
 bool* printversion;
 
-
-void setActualHalstead(Halstead* actualHalstead){
-    actualHal = actualHalstead;
-}
-
-Halstead* getActualHalstead(){
-    return actualHal;
-}
 
 void setRelationTree(bool value){
   relationtree = &value;

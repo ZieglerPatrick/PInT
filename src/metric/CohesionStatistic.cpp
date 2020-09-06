@@ -4,8 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-#define NUMBER_OF_CSV_ENTRIES (3)
-
 CohesionStatistic::~CohesionStatistic(){}
 
 void CohesionStatistic::Calculate(){
@@ -74,11 +72,10 @@ void CohesionStatistic::CSVExport(std::string FileName){
 	std::ofstream File;
 	File.open(FileName, std::ios::app);
 
-	File << IO::CSVPrintLine(NUMBER_OF_CSV_ENTRIES, "PatterName", "TCC", "LCC");
+	File << IO::CSVPrintLine("PatterName", "TCC", "LCC");
 
 	for(auto MapEntry : CohesionMap){
 		File << IO::CSVPrintLine(
-				NUMBER_OF_CSV_ENTRIES,
 				MapEntry.first -> GetPatternName(),
 				MapEntry.second.TCC,
 				MapEntry.second.LCC

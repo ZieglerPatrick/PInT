@@ -7,6 +7,7 @@
 #include "SimilarityMetrics.h"
 #include "metric/FunctionPointAnalysisStatistic.h"
 #include "metric/CohesionStatistic.h"
+#include "metric/HalsteadStatistic.h"
 
 #include "ToolInformation.h"
 #ifndef HPCRUNNINGSTATS_H
@@ -93,15 +94,14 @@ static llvm::cl::OptionCategory relationTree("Output the relation tree");
 static llvm::cl::extrahelp HelpRelationTree("-relationTree Use this flag, if you want to see the relation tree\n \n");
 static llvm::cl::opt<bool> RelationTree("relationTree", llvm::cl::cat(noTree));
 
-Halstead* actHalstead = new Halstead();
-
 static HPCPatternStatistic* Statistics[] = {
 		new SimplePatternCountStatistic(),
 		new FanInFanOutStatistic(20),
 		new LinesOfCodeStatistic(),
 		new CyclomaticComplexityStatistic(),
 		new FunctionPointAnalysisStatistic(),
-		new CohesionStatistic()
+		new CohesionStatistic(),
+		new HalsteadStatistic()
 };
 
 /**
@@ -159,7 +159,6 @@ int main (int argc, const char** argv)
 
 		clang::tooling::ArgumentsAdjuster ArgsAdjuster = clang::tooling::getInsertArgumentAdjuster(Arguments, clang::tooling::ArgumentInsertPosition::END);
 		HPCPatternTool.appendArgumentsAdjuster(ArgsAdjuster);
-		setActualHalstead(actHalstead);
 
 		/* Run the tool with options and source files provided */
 		int retcode = 0;
@@ -218,6 +217,7 @@ int main (int argc, const char** argv)
 		Statistics[3]->CSVExport("CC.csv");
 		Statistics[4]->CSVExport("FPA.csv");
 		Statistics[5]->CSVExport("Cohesion.csv");
+		Statistics[6]->CSVExport("Halstead.csv");
 
 		/* Similarity Measures
 		std::vector<HPCParallelPattern*> SimPatterns;

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-#define NUMBER_OF_CSV_ENTRIES (4)
 #define VALUE_ADJUSTMENT_FACTOR_OFFSET (0.65)
 #define VALUE_ADJUSTMENT_FACTOR_PERCENT (0.01)
 
@@ -59,11 +58,10 @@ void FunctionPointAnalysisStatistic::FunctionPointAnalysisStatistic::CSVExport(s
 	std::ofstream File;
 	File.open(FileName, std::ios::app);
 
-	File << IO::CSVPrintLine(NUMBER_OF_CSV_ENTRIES, "PatterName", "UFP", "VAF", "FPC");
+	File << IO::CSVPrintLine("PatterName", "UFP", "VAF", "FPC");
 
 	for(HPCParallelPattern* Pattern : PatternGraph::GetInstance() -> GetAllPatterns()){
 		File << IO::CSVPrintLine(
-				NUMBER_OF_CSV_ENTRIES,
 				Pattern -> GetPatternName(),
 				CalculateUnadjustedFunctionPoints(Pattern),
 				CalculateValueAdjustmentFactor(),

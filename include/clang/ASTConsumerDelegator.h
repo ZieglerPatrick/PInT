@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HPCPatternInstrASTTraversal.h"
+#include "metric/halstead/HalsteadVisitor.h"
 #include "metric/fpa/visitor/FunctionPointAnalysisVisitor.h"
 
 class ASTConsumerDelegator : public clang::ASTConsumer{
@@ -9,6 +10,7 @@ class ASTConsumerDelegator : public clang::ASTConsumer{
 		virtual ~ASTConsumerDelegator(){};
 		virtual void HandleTranslationUnit(clang::ASTContext &Context);
 	private:
-		HPCPatternInstrVisitor InstrumentationVisitor;
-		FunctionPointAnalysisVisitor FPAVisitor;
+		HPCPatternInstrVisitor myInstrumentationVisitor;
+		FunctionPointAnalysisVisitor myFunctionPointAnalysisVisitor;
+		HalsteadVisitor myHalsteadVisitor;
 };

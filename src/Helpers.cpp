@@ -269,16 +269,3 @@ void Preconditions::CheckArgument(bool Condition, std::exception Exception){
 		throw Exception;
 	}
 }
-
-std::string IO::CSVPrintLine(int argc, std::string entries...){
-	std::stringstream joiner;
-
-	for(int i = 0 ; i < argc ; ++i){
-		joiner << entries[i];
-		if(i < argc - 1)
-			joiner << CSV_SEPARATOR_CHAR;
-	}
-
-	joiner << "\n";
-	return (joiner.str());
-}

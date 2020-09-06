@@ -65,10 +65,11 @@ public:
 	 * @brief Increase operators count by one.
 	 * Modification of the original code for the Halstead statistic.
 	 *
+	 * @param Operator A unique string-representation of the operator.
 	 * @since Sept. 4th 2020
 	 * @author Patrick Ziegler
 	 */
-	void IncrementNumberOfOperators();
+	void IncrementNumberOfOperators(std::string Operator);
 
 	/**
 	 * @brief Number of operators.
@@ -79,16 +80,28 @@ public:
 	 * @author Patrick Ziegler
 	 * @return the number of operands inside the pattern.
 	 */
-	int GetNumberOfOperators();
+	size_t GetNumberOfOperators();
+
+	/**
+	 * @brief Number of distinct operators.
+	 * Returns the number of distinct operators according to their string representation.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 * @return the number of operands inside the pattern.
+	 */
+	size_t GetNumberOfDistinctOperators();
 
 	/**
 	 * @brief Increase operands count by one.
 	 * Modification of the original code for the Halstead statistic.
 	 *
+	 * @param Operator A unique string-representation of the operand.
 	 * @since Sept. 4th 2020
 	 * @author Patrick Ziegler
 	 */
-	void IncrementNumberOfOperands();
+	void IncrementNumberOfOperands(std::string Operator);
 
 	/**
 	 * @brief Number of operands.
@@ -98,7 +111,17 @@ public:
 	 * @since Sept. 4th 2020
 	 * @author Patrick Ziegler
 	 */
-	int GetNumberOfOperands();
+	size_t GetNumberOfOperands();
+
+	/**
+	 * @brief Number of unique operands.
+	 * Returns the number of distinct operands according to their string representation.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 */
+	size_t GetNumberOfDistinctOperands();
 
 	/**
 	 * @brief Adds a function point.	 *
@@ -128,9 +151,9 @@ private:
 	DesignSpace DesignSp;
 	std::string PatternName;
 
-	int numberOfOperators = 0;
-	int numberOfOperands = 0;
-	std::set<FunctionPointPointer, FunctionPointComparator> functionPoints;
+	std::multiset<std::string> Operators;
+	std::multiset<std::string> Operands;
+	std::set<FunctionPointPointer, FunctionPointComparator> FunctionPoints;
 
 	std::vector<PatternOccurrence*> Occurrences;
 };

@@ -4,6 +4,12 @@
 #include "PatternGraph.h"
 #include <vector>
 #include <string>
+#include <sstream>
+
+/**
+ * Has to be redefined here for some godforsaken reasons, otherwise the CSVPrint template complains.
+ */
+#define CSV_SEPARATOR_CHAR ","
 
 /**
  * GraphSearchDirection for recursive descent.
@@ -58,12 +64,17 @@ namespace Preconditions
 
 namespace IO
 {
-	/**
-	 * @param argc the number of entries
-	 * @param entries all row entries
- 	 * @since September 4th, 2020
- 	 * @author Patrick Ziegler
- 	 * return a concatenated row string containing all entries.
-	 */
-	extern std::string CSVPrintLine(int argc, std::string entries...);
+	template<typename Entry> std::string CSVPrint(Entry entry){
+		std::stringstream joiner;
+		joiner << entry;
+		return (joiner.str());
+	}
+
+	template<typename First, typename... Rest > std::string CSVPrint(First first, Rest... rest){
+		return (CSVPrint(first) + CSV_SEPARATOR_CHAR + CSVPrint(rest...));
+	}
+
+	template<typename First, typename... Rest> std::string CSVPrintLine(First first, Rest ... rest){
+		return (CSVPrint(first, rest...) + "\n");
+	}
 }

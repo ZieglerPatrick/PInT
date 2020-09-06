@@ -107,28 +107,40 @@ std::vector<PatternCodeRegion*> HPCParallelPattern::GetCodeRegions()
 	return CodeRegions;
 }
 
-void HPCParallelPattern::IncrementNumberOfOperators(){
-	this -> numberOfOperators++;
+void HPCParallelPattern::IncrementNumberOfOperators(std::string Operator){
+	this -> Operators.emplace(Operator);
 }
 
-int HPCParallelPattern::GetNumberOfOperators(){
-	return (this -> numberOfOperators);
+size_t HPCParallelPattern::GetNumberOfOperators(){
+	return (this -> Operators.size());
 }
 
-void HPCParallelPattern::IncrementNumberOfOperands(){
-	this -> numberOfOperands++;
+size_t HPCParallelPattern::GetNumberOfDistinctOperators(){
+	std::set<std::string> DistinctOperators;
+	DistinctOperators.insert(Operators.begin(), Operators.end());
+	return (DistinctOperators.size());
 }
 
-int HPCParallelPattern::GetNumberOfOperands(){
-	return (this -> numberOfOperands);
+void HPCParallelPattern::IncrementNumberOfOperands(std::string Operand){
+	this -> Operands.emplace(Operand);
+}
+
+size_t HPCParallelPattern::GetNumberOfOperands(){
+	return (this -> Operands.size());
+}
+
+size_t HPCParallelPattern::GetNumberOfDistinctOperands(){
+	std::set<std::string> DistinctOperands;
+	DistinctOperands.insert(Operands.begin(), Operands.end());
+	return (DistinctOperands.size());
 }
 
 void HPCParallelPattern::AddFunctionPoint(FunctionPointPointer NewFunctionPoint){
-	this -> functionPoints.emplace(std::move(NewFunctionPoint));
+	this -> FunctionPoints.emplace(std::move(NewFunctionPoint));
 }
 
 const std::set<FunctionPointPointer, FunctionPointComparator>& HPCParallelPattern::GetFunctionPoints(){
-	return (this -> functionPoints);
+	return (this -> FunctionPoints);
 }
 
 /*
@@ -464,5 +476,3 @@ PatternCodeRegion* PatternIDisUsed(std::string ID){
 clang::SourceRange PatternCodeRegion::GetSourceRange(){
 	return (clang::SourceRange(StartSLocation, EndSLocation));
 }
-/*Stack for Halstead */
-std::vector<PatternOccurrence*> OccStackForHalstead;
