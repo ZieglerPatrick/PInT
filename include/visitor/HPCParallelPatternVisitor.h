@@ -4,11 +4,9 @@
 class HPCParallelPattern;
 
 /**
- * This visitor is used to access the pattern corresponding to
- * an pattern occurrence. This visitor might be accessed multiple
- * times per pattern graph, if the pattern occurs more than once.<br>
- * However, the pattern instance should remain unique for each of those
- * occurrences.
+ * This visitor is used to access the pattern corresponding to a pattern occurrence.
+ * A pattern may appear multiple times, once for each patter occurrence. In that
+ * case, only the first occurrence is taken into consideration.
  */
 class HPCParallelPatternVisitor{
 	public:

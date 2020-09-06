@@ -1,5 +1,6 @@
 #include "visitor/HPCParallelPatternVisitor.h"
-#include "HPCParallelPattern.h"
+
+HPCParallelPatternVisitor::~HPCParallelPatternVisitor(){}
 
 void HPCParallelPatternVisitor::VisitParallelPattern(HPCParallelPattern* ParallelPattern){
 	static_cast<void>(ParallelPattern); //Avoid unused parameter warning

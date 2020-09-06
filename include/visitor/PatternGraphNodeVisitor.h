@@ -10,9 +10,9 @@ class FunctionNode;
 
 /**
  * This visitor is used to access all nodes in a given pattern graph.<br>
- * Since the nodes are stored as instances of PatternGraphNode, each
- * of these nodes has to implement an Accept method, expecting an instance
- * of this visitor as an argument, to break up the encapsulation.
+ * A node may either be a {@link PatternCodeRegion} or a {@link FunctionNode}.
+ * The visitor will traverse through those nodes in a top-down fashion and each
+ * node in the order they appear in the pattern graph.
  */
 class PatternGraphNodeVisitor : public PatternOccurrenceVisitor{
 	public:
@@ -28,4 +28,7 @@ class PatternGraphNodeVisitor : public PatternOccurrenceVisitor{
 	private:
 		//Function calls may be cyclic. In that case, only visit the first occurrence.
 		std::set<PatternGraphNode*> VisitedNodes;
+		//Pattern occurrences and parallel patterns may only be visited once.
+		std::set<PatternOccurrence*> VisitedPatternOccurrences;
+		std::set<HPCParallelPattern*> VisitedParallelPatterns;
 }; 

@@ -5,6 +5,7 @@
 #include "HPCParallelPattern.h"
 #include "Helpers.h"
 #include "SimilarityMetrics.h"
+#include "metric/FunctionPointAnalysisStatistic.h"
 
 #include "ToolInformation.h"
 #ifndef HPCRUNNINGSTATS_H
@@ -93,7 +94,14 @@ static llvm::cl::opt<bool> RelationTree("relationTree", llvm::cl::cat(noTree));
 
 Halstead* actHalstead = new Halstead();
 
-static HPCPatternStatistic* Statistics[] = { new SimplePatternCountStatistic(), new FanInFanOutStatistic(20), new LinesOfCodeStatistic(), new CyclomaticComplexityStatistic(), actHalstead };
+static HPCPatternStatistic* Statistics[] = {
+		new SimplePatternCountStatistic(),
+		new FanInFanOutStatistic(20),
+		new LinesOfCodeStatistic(),
+		new CyclomaticComplexityStatistic(),
+		actHalstead ,
+		new FunctionPointAnalysisStatistic()
+};
 
 /**
  * @brief Tool entry point. The tool's entry point which calls the FrontEndAction on the code.

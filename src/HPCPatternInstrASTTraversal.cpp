@@ -135,7 +135,7 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 				PatternCodeReg->isInMain = SourceMan.isInMainFile(LocStart);
 				LastNodeType = Pattern_Begin;
 
-				PatternBegin.emplace(CallExpr, PatternCodeReg);
+				PatternBegin -> emplace(CallExpr, PatternCodeReg);
 			}
 			else if (!FnName.compare(PATTERN_END_CXX_FNNAME) || !FnName.compare(PATTERN_END_C_FNNAME))
 			{
@@ -168,8 +168,10 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 				#ifdef LOCDEBUG
 					std::cout << "setted LineNumber of: "<< *EndNode->GetID()<<" to "<< SourceLoc.getLineNumber()<<" verification: "<<EndNode->getLineNumber()<< '\n';
 				#endif
+				PatternCodeReg->SetLastLine(SourceLoc.getLineNumber());
+				PatternCodeReg->SetEndSourceLoc(LocEnd);
 
-				PatternEnd.emplace(CallExpr, PatternCodeReg);
+				PatternEnd -> emplace(CallExpr, PatternCodeReg);
 			}
 			// If no: search the called function for patterns
 			else
@@ -233,7 +235,10 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 	return true;
 }
 
-HPCPatternInstrVisitor::HPCPatternInstrVisitor (clang::ASTContext* Context) : Context(Context)
+HPCPatternInstrVisitor::HPCPatternInstrVisitor (clang::ASTContext* Context) :
+		Context(Context),
+		PatternBegin(new PatternMap()),
+		PatternEnd(new PatternMap())
 {
 	using namespace clang::ast_matchers;
 	StatementMatcher StringArgumentMatcher = hasDescendant(stringLiteral().bind("patternstr"));
@@ -242,12 +247,12 @@ HPCPatternInstrVisitor::HPCPatternInstrVisitor (clang::ASTContext* Context) : Co
 	PatternEndFinder.addMatcher(StringArgumentMatcher, &PatternEndHandler);
 }
 
-PatternMap HPCPatternInstrVisitor::GetPatternBegin(){
-	return (PatternBegin);
+std::shared_ptr<PatternMap> HPCPatternInstrVisitor::GetPatternBegin(){
+	return (this -> PatternBegin);
 }
 
-PatternMap HPCPatternInstrVisitor::GetPatternEnd(){
-	return (PatternEnd);
+std::shared_ptr<PatternMap> HPCPatternInstrVisitor::GetPatternEnd(){
+	return (this -> PatternEnd);
 }
 
 Halstead* currentHlst;
@@ -275,7 +280,7 @@ bool HalsteadVisitor::VisitBinaryOperator(clang::BinaryOperator *BinarOp){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -290,7 +295,7 @@ bool HalsteadVisitor::VisitDeclStmt(clang::DeclStmt *DclStmt){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -314,7 +319,7 @@ bool HalsteadVisitor::VisitCallExpr(clang::CallExpr *CallExpr){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -330,7 +335,7 @@ bool HalsteadVisitor::VisitUnaryOperator(clang::UnaryOperator *UnaryOp){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -346,7 +351,7 @@ bool HalsteadVisitor::VisitCompoundAssignOperator(clang::CompoundAssignOperator 
 		}
 		else{
 			for(HPCParallelPattern* Pat : isInPatterns){
-				Pat->incrementNumOfOperators();
+				Pat->IncrementNumberOfOperators();
 			}
 		}
 		return true;
@@ -361,7 +366,7 @@ bool HalsteadVisitor::VisitMemberExpr(clang::MemberExpr *MemExpr){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -376,7 +381,7 @@ bool HalsteadVisitor::VisitStringLiteral(clang::StringLiteral *StrgLit){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -391,7 +396,7 @@ bool HalsteadVisitor::VisitCharacterLiteral(clang::CharacterLiteral *CharLit){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			Pat->incrementNumOfOperators();
+			Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;
@@ -411,17 +416,17 @@ bool HalsteadVisitor::VisitVarDecl(clang::VarDecl *VrDcl){
 		countQual return the number of TypeQualifiers excluding the default qualifier */
 		for(HPCParallelPattern* Pat : isInPatterns){
 			for (int i = 0; i < numTypeQual; i++) {
-					Pat->incrementNumOfOperators();
+					Pat->IncrementNumberOfOperators();
 			}
 			/*is the variable mot only declared but also initialized, than we have one operator more
 			  in the patterns  */
 
 			if(VrDcl->hasInit()){
-				Pat->incrementNumOfOperators();
+				Pat->IncrementNumberOfOperators();
 			}
 			/*count the storage class specifiers*/
 			if(VrDcl->getStorageClass()!= clang::StorageClass::SC_None){
-				Pat->incrementNumOfOperators();
+				Pat->IncrementNumberOfOperators();
 			}
 		}
 	}
@@ -437,7 +442,7 @@ bool HalsteadVisitor::VisitFunctionDecl(clang::FunctionDecl *FctDecl){
 	}
 	else{
 		for(HPCParallelPattern* Pat : isInPatterns){
-			if(FctDecl->getStorageClass() != clang::StorageClass::SC_None ) Pat->incrementNumOfOperators();
+			if(FctDecl->getStorageClass() != clang::StorageClass::SC_None ) Pat->IncrementNumberOfOperators();
 		}
 	}
 	return true;

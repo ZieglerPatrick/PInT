@@ -19,7 +19,7 @@ set (HEADERS_DIR ${PROJECT_SOURCE_DIR}/include)
 #  Import Clang + Dependencies                                         #
 #                                                                      #
 ########################################################################
-set (CLANG_INCLUDE_DIR "/usr/lib/clang/9.0.1" CACHE STRING
+set (CLANG_INCLUDE_DIR "/usr/lib/clang/12" CACHE STRING
 	"Directory where the clang system library header files are located")
 add_definitions (-DCLANG_INCLUDE_DIR="${CLANG_INCLUDE_DIR}")
 

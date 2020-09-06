@@ -6,8 +6,9 @@
 class PatternOccurrence;
 
 /**
- * This visitor is used to access all pattern occurrences 
- * in the underlying pattern graph.
+ * This visitor is used to access the pattern occurrence corresponding to a pattern code region.
+ * A pattern may occur multiple times, once for each patter code region. In that
+ * case, only the first occurrence is taken into consideration.
  */
 class PatternOccurrenceVisitor : public HPCParallelPatternVisitor{
 	public:

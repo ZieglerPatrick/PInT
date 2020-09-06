@@ -4,6 +4,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <set>
 #include "clang/AST/Decl.h"
 #include "llvm/Support/Casting.h"
 
@@ -14,11 +15,12 @@
 #include "visitor/PatternGraphNodeVisitor.h"
 #include "visitor/PatternOccurrenceVisitor.h"
 
+#include "metric/fpa/FunctionPoint.h"
+#include "metric/fpa/FunctionPointComparator.h"
+
 /* Forward declarations */
 class PatternOccurrence;
 class PatternCodeRegion;
-
-
 
 /**
  * This class describes a parallel pattern identified by the design space and the pattern name.
@@ -59,16 +61,76 @@ public:
 	int GetTotalLinesOfCode();
 
 	bool Equals(HPCParallelPattern* Pattern);
+	/**
+	 * @brief Increase operators count by one.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 */
+	void IncrementNumberOfOperators();
 
-	void incrementNumOfOperators();
+	/**
+	 * @brief Number of operators.
+	 * Returns the number of operators according to the Halstead metric.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 * @return the number of operands inside the pattern.
+	 */
+	int GetNumberOfOperators();
 
-	int GetNumOfOperators();
+	/**
+	 * @brief Increase operands count by one.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 */
+	void IncrementNumberOfOperands();
+
+	/**
+	 * @brief Number of operands.
+	 * Returns the number of operands according to the Halstead metric.
+	 * Modification of the original code for the Halstead statistic.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 */
+	int GetNumberOfOperands();
+
+	/**
+	 * @brief Adds a function point.	 *
+	 * @param NewFunctionPoint the function point
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 */
+	void AddFunctionPoint(FunctionPointPointer NewFunctionPoint);
+
+	/**
+	 * @brief Number of unique function points.
+	 * Returns the number of distinct function points in the pattern. Two function points
+	 * are equal, if and only if they share the same type and label. This may happen when
+	 * referring to the same variable multiple time, where each time may be counted as
+	 * an independent function point.
+	 *
+	 * @since Sept. 4th 2020
+	 * @author Patrick Ziegler
+	 * @return a set containing the unique function points.
+	 */
+	const std::set<FunctionPointPointer, FunctionPointComparator>& GetFunctionPoints();
+
+
 
 private:
 	DesignSpace DesignSp;
 	std::string PatternName;
 
-	int numOfOperators = 0;
+	int numberOfOperators = 0;
+	int numberOfOperands = 0;
+	std::set<FunctionPointPointer, FunctionPointComparator> functionPoints;
 
 	std::vector<PatternOccurrence*> Occurrences;
 };
@@ -198,6 +260,15 @@ public:
 	std::vector<CallTreeNode*>* getCorrespondingCallTreeNodes(){return &CorrespondingCallTreeNodes;}
 
 	bool isSuitedForNestingStatistics = true;
+
+	/**
+	 * @brief The source range.
+	 * Modification of the original code for the Function Point Analysis.
+	 *
+	 * @since Sept. 6th 2020
+	 * @author Patrick Ziegler
+	 */
+	clang::SourceRange GetSourceRange();
 private:
 	PatternOccurrence* PatternOcc;
 

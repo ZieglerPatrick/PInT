@@ -3,6 +3,7 @@
 #include "HPCParallelPattern.h"
 #include "PatternGraph.h"
 #include <vector>
+#include <string>
 
 /**
  * GraphSearchDirection for recursive descent.
@@ -36,4 +37,33 @@ namespace SetAlgorithms
 	extern std::vector<PatternOccurrence*> GetUniquePatternOccList(std::vector<PatternOccurrence*> PatternOccs);
 
 	extern std::vector<HPCParallelPattern*> GetUniquePatternList(std::vector<HPCParallelPattern*> Patterns);
+}
+
+namespace Preconditions
+{
+	/**
+ 	 * @brief An easy way to apply sanity checks.
+	 * Inspired by the Guava preconditions, this function will check if a given condition is satisfied.
+ 	 * If it is not, then an exception will be thrown.<br>
+ 	 * The purpose of this function to catch simple errors inside the code, like modifying array elements
+ 	 * outside of its range, before they lead to segmentation faults.
+ 	 *
+ 	 * @param Condition a condition that is expected to be satisifed.
+ 	 * @param Exception is thrown when the condition is violated.
+ 	 * @since September 3rd, 2020
+ 	 * @author Patrick Ziegler
+ 	 */
+	extern void CheckArgument(bool Condition, std::exception Exception);
+}
+
+namespace IO
+{
+	/**
+	 * @param argc the number of entries
+	 * @param entries all row entries
+ 	 * @since September 4th, 2020
+ 	 * @author Patrick Ziegler
+ 	 * return a concatenated row string containing all entries.
+	 */
+	extern std::string CSVPrintLine(int argc, std::string entries...);
 }

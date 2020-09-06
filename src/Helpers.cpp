@@ -1,6 +1,7 @@
 #include "Helpers.h"
-#include <vector>
-
+#include "HPCPatternStatistics.h"
+#include <sstream>
+#include <cstdarg>
 
 /**
  * @brief A helper function to retrieve all PatternOccurrence objects from a list of PatternCodeRegions.
@@ -260,4 +261,24 @@ std::vector<HPCParallelPattern*> SetAlgorithms::GetUniquePatternList(std::vector
 	}
 
 	return Res;
+}
+
+void Preconditions::CheckArgument(bool Condition, std::exception Exception){
+	if(!Condition){
+		std::cerr << Exception.what() << std::endl;
+		throw Exception;
+	}
+}
+
+std::string IO::CSVPrintLine(int argc, std::string entries...){
+	std::stringstream joiner;
+
+	for(int i = 0 ; i < argc ; ++i){
+		joiner << entries[i];
+		if(i < argc - 1)
+			joiner << CSV_SEPARATOR_CHAR;
+	}
+
+	joiner << "\n";
+	return (joiner.str());
 }

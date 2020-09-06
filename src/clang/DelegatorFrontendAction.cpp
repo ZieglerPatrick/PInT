@@ -1,6 +1,5 @@
 #include "clang/DelegatorFrontendAction.h"
 #include "clang/ASTConsumerDelegator.h"
-#include <memory>
 
 std::unique_ptr<clang::ASTConsumer> DelegatorFrontendAction::CreateASTConsumer(clang::CompilerInstance &Compiler, llvm::StringRef InFile){
 	static_cast<void>(InFile); //Avoid unused parameter warning

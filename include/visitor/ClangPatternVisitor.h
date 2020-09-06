@@ -1,6 +1,6 @@
 #pragma once
 
-#include <HPCPatternInstrASTTraversal.h>
+#include "HPCPatternInstrASTTraversal.h"
 #include "visitor/PatternGraphNodeVisitor.h"
 
 #define PatternMap std::map<clang::CallExpr*, PatternCodeRegion*>
@@ -15,12 +15,23 @@
  * @tparam Derived
  */
 template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeVisitor, public clang::RecursiveASTVisitor<Derived>{
-	private:
-		PatternMap PatternBegin;
-		PatternMap PatternEnd;
+	protected:
+		/**
+		 * Contains all pattern code regions and their corresponding Pattern_Begin.
+		 */
+		std::shared_ptr<PatternMap> PatternBegin;
+		/**
+		 * Contains all pattern code regions and their corresponding Pattern_End.
+		 */
+		std::shared_ptr<PatternMap> PatternEnd;
 
 	public:
-		explicit ClangPatternVisitor(PatternMap ClangPatternBegin, PatternMap ClangPatternEnd){
+		explicit ClangPatternVisitor
+		(
+				std::shared_ptr<PatternMap> ClangPatternBegin,
+				std::shared_ptr<PatternMap> ClangPatternEnd
+		)
+		{
 			this -> PatternBegin = ClangPatternBegin;
 			this -> PatternEnd = ClangPatternEnd;
 		}
@@ -29,12 +40,12 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 	bool TraverseCallExpr(clang::CallExpr* Expression){
 		PatternMap::iterator Pattern;
 
-		if((Pattern = PatternBegin.find(Expression)) != PatternBegin.end()){
+		if((Pattern = PatternBegin -> find(Expression)) != PatternBegin -> end()){
 			VisitPatternCodeRegion(Pattern -> second);
 			VisitPatternOccurrence(Pattern -> second -> GetPatternOccurrence());
 			VisitParallelPattern(Pattern -> second -> GetPatternOccurrence() -> GetPattern());
 			return (true);
-		}else if((Pattern = PatternEnd.find(Expression)) != PatternEnd.end()){
+		}else if((Pattern = PatternEnd -> find(Expression)) != PatternEnd -> end()){
 			EndVisitPatternCodeRegion(Pattern -> second);
 			EndVisitPatternOccurrence(Pattern -> second -> GetPatternOccurrence());
 			EndVisitParallelPattern(Pattern -> second -> GetPatternOccurrence() -> GetPattern());
