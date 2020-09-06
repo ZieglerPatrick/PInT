@@ -6,6 +6,7 @@
 #include "Helpers.h"
 #include "SimilarityMetrics.h"
 #include "metric/FunctionPointAnalysisStatistic.h"
+#include "metric/CohesionStatistic.h"
 
 #include "ToolInformation.h"
 #ifndef HPCRUNNINGSTATS_H
@@ -99,8 +100,8 @@ static HPCPatternStatistic* Statistics[] = {
 		new FanInFanOutStatistic(20),
 		new LinesOfCodeStatistic(),
 		new CyclomaticComplexityStatistic(),
-		actHalstead ,
-		new FunctionPointAnalysisStatistic()
+		new FunctionPointAnalysisStatistic(),
+		new CohesionStatistic()
 };
 
 /**
@@ -214,7 +215,9 @@ int main (int argc, const char** argv)
 		Statistics[0]->CSVExport("Counts.csv");
 		Statistics[1]->CSVExport("FIFO.csv");
 		Statistics[2]->CSVExport("LOC.csv");
-
+		Statistics[3]->CSVExport("CC.csv");
+		Statistics[4]->CSVExport("FPA.csv");
+		Statistics[5]->CSVExport("Cohesion.csv");
 
 		/* Similarity Measures
 		std::vector<HPCParallelPattern*> SimPatterns;
