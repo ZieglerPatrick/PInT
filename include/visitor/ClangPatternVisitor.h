@@ -46,9 +46,9 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 			VisitParallelPattern(Pattern -> second -> GetPatternOccurrence() -> GetPattern());
 			return (true);
 		}else if((Pattern = PatternEnd -> find(Expression)) != PatternEnd -> end()){
+			EndVisitParallelPattern(Pattern -> second -> GetPatternOccurrence() -> GetPattern());
 			EndVisitPatternCodeRegion(Pattern -> second);
 			EndVisitPatternOccurrence(Pattern -> second -> GetPatternOccurrence());
-			EndVisitParallelPattern(Pattern -> second -> GetPatternOccurrence() -> GetPattern());
 			return (true);
 		}else{
 			return (clang::RecursiveASTVisitor<Derived>::TraverseCallExpr(Expression));
