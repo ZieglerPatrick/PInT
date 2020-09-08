@@ -1,6 +1,6 @@
 <h1>How to install and use the tool</h1>
 <h2>1. Prerequisites</h2>
-1) Install clang 12 with libTooling support (May work with clang 10+)<br>
+1) Install clang 12 with libTooling support (May work with clang 9+)<br>
 2) Install cmake 3.12+<br>
 3) Clone this git repository to your machine
 

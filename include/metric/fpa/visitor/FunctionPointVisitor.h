@@ -1,6 +1,7 @@
 #pragma once
 
 #include "clang/AST/RecursiveASTVisitor.h"
+#include "clang/Basic/SourceManager.h"
 #include "metric/fpa/FunctionPoint.h"
 
 /**
@@ -11,13 +12,19 @@ template <typename Derived> class FunctionPointVisitor : public clang::Recursive
 	public:
 		explicit FunctionPointVisitor(clang::ASTContext* myContext, clang::SourceRange mySourceRange) :
 			Context(myContext),
-			SourceRange(mySourceRange){
+			SourceRange(mySourceRange),
+			IsBefore(Context -> getSourceManager()){
 		}
 		std::vector<FunctionPoint*> FunctionPoints;
 
 	protected:
 		clang::ASTContext* Context;
 		clang::SourceRange SourceRange;
+		clang::BeforeThanCompare<clang::SourceLocation> IsBefore;
+
+		bool FullyContains(clang::SourceRange Source, clang::SourceRange Target){
+			return (!IsBefore(Target.getBegin(), Source.getBegin()) && !IsBefore(Source.getEnd(), Target.getEnd()));
+		}
 
 		/**
 		 * Derives the declaration ranges of all references in the given statement.
@@ -61,7 +68,7 @@ template <typename Derived> class FunctionPointVisitor : public clang::Recursive
 		bool OverlapsWithPattern(clang::Stmt* Statement){
 			//Check if at least one declaration is inside the code region
 			for(auto DeclarationRange : GetDeclarationSourceRanges(Statement))
-				if(SourceRange.fullyContains(DeclarationRange))
+				if(!FullyContains(SourceRange, DeclarationRange))
 					return (true);
 			return (false);
 		}
@@ -76,7 +83,7 @@ template <typename Derived> class FunctionPointVisitor : public clang::Recursive
 		bool OverlapsWithEnvironment(clang::Stmt* Statement){
 			//Check if at least one declaration is outside the code region
 			for(auto DeclarationRange : GetDeclarationSourceRanges(Statement))
-				if(!SourceRange.fullyContains(DeclarationRange))
+				if(!FullyContains(SourceRange, DeclarationRange))
 					return (true);
 			return (false);
 		}
