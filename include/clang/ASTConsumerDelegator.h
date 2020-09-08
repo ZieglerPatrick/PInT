@@ -4,6 +4,9 @@
 #include "metric/halstead/HalsteadVisitor.h"
 #include "metric/fpa/visitor/FunctionPointAnalysisVisitor.h"
 
+/**
+ * This class applies the
+ */
 class ASTConsumerDelegator : public clang::ASTConsumer{
 	public:
 		explicit ASTConsumerDelegator(clang::ASTContext *Context);

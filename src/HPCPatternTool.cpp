@@ -9,6 +9,11 @@
 #include "metric/CohesionStatistic.h"
 #include "metric/HalsteadStatistic.h"
 
+#include "similarity/CosineSimilarityStatistic.h"
+#include "similarity/JaccardSimilarityStatistic.h"
+#include "similarity/OverlapCoefficientStatistic.h"
+#include "similarity/WeightedJaccardSimilarityStatistic.h"
+
 #include "ToolInformation.h"
 #ifndef HPCRUNNINGSTATS_H
   #include "HPCRunningStats.h"
@@ -109,17 +114,24 @@ static HPCPatternStatistic* Statistics[] = {
  * Register statistics and similarity measures here.
  */
 
-int main (int argc, const char** argv)
-{
-  setCommandArguments(OnlyPatterns.getValue(), NoTree.getValue(), UseSpecFiles.getValue(), MaxTreeDisplayDepth.getValue(), DisplayCompilationsList.getValue(), PintVersion.getValue(), RelationTree.getValue());
+int main (int argc, const char** argv){
+	setCommandArguments(
+			OnlyPatterns.getValue(),
+			NoTree.getValue(),
+			UseSpecFiles.getValue(),
+			MaxTreeDisplayDepth.getValue(),
+			DisplayCompilationsList.getValue(),
+			PintVersion.getValue(),
+			RelationTree.getValue()
+	);
+
 	MaxTreeDisplayDepth.setInitialValue(MAX_DEPTH);
 
-		clang::tooling::CommonOptionsParser OptsParserVersion(argc, argv, pintVersion);
+	clang::tooling::CommonOptionsParser OptsParserVersion(argc, argv, pintVersion);
 
 	if(PintVersion.getValue()){
-			std::cout << "You are currently using the Version: " << PInTVersion <<'\n';
-	}
-	else{
+		std::cout << "You are currently using the Version: " << PInTVersion <<'\n';
+	}else{
 		clang::tooling::CommonOptionsParser OptsParser(argc, argv, HPCPatternToolCategory);
 		std::vector<std::string> analyseList;
 		if(UseSpecFiles.getValue()){
@@ -130,8 +142,7 @@ int main (int argc, const char** argv)
 				std::cout << analyseList[i] << std::endl;
 			}
 
-		}
-		else{
+		}else{
 			analyseList = (OptsParser.getCompilations()).getAllFiles();
 		}
 
@@ -143,7 +154,6 @@ int main (int argc, const char** argv)
 			for(size_t i = 0; i< d.size(); i++){
 				std::cout << d[i] << std::endl;
 			}
-
 		}
 
 		/* Declare vector of command line arguments */
@@ -165,47 +175,41 @@ int main (int argc, const char** argv)
 		try{
 			retcode = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<DelegatorFrontendAction>().get());
 
-      #ifdef DEBUG
-        std::cout << "\nPrinting out DeclarationVector: " << std::endl;
-        for(CallTreeNode* Node : *ClTre->GetDeclarationVector())
-        {
-          std::cout << *Node->GetID() << " " << Node->GetNodeType()<< std::endl;
-          for(auto CalleeEntry = (Node->GetCallees())->begin() ; CalleeEntry != (Node->GetCallees())->end();){
-            std::cout << "--> " << *(CalleeEntry->second)->GetID() << " " << (CalleeEntry->second)->GetNodeType()<< std::endl;
-            CalleeEntry++;
-          }
-        }
-      #endif
-      if(!NoTree.getValue()){
-        ClTre->appendAllDeclToCallTree(ClTre->getRoot(), MAX_DEPTH);
-        ClTre->setUpTree();
-      }
-		}
-		catch(std::exception& terminate){
+			#ifdef DEBUG
+				std::cout << "\nPrinting out DeclarationVector: " << std::endl;
+				for(CallTreeNode* Node : *ClTre->GetDeclarationVector()){
+					std::cout << *Node->GetID() << " " << Node->GetNodeType()<< std::endl;
+					for(auto CalleeEntry = (Node->GetCallees())->begin() ; CalleeEntry != (Node->GetCallees())->end();){
+						std::cout << "--> " << *(CalleeEntry->second)->GetID() << " " << (CalleeEntry->second)->GetNodeType()<< std::endl;
+						CalleeEntry++;
+					}
+				}
+			#endif
+			if(!NoTree.getValue()){
+				ClTre->appendAllDeclToCallTree(ClTre->getRoot(), MAX_DEPTH);
+				ClTre->setUpTree();
+			}
+		}catch(std::exception& terminate){
 			std::cout << terminate.what();
-      return 0;
+			return 0;
 		}
-    try{
-      ClTre->lookIfTreeIsCorrect();
-    }
-    catch(TooManyBeginsException& begins){
-      begins.what();
-      return 0;
-    }
-		//int halstead = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<HalsteadClassAction>().get());
-	  if(!NoTree.getValue()){
+		try{
+			ClTre->lookIfTreeIsCorrect();
+		}catch(TooManyBeginsException& begins){
+			begins.what();
+			return 0;
+		}
+		if(!NoTree.getValue()){
 			int mxdspldpth = MaxTreeDisplayDepth.getValue();
-      if(RelationTree.getValue())
-      {
-		    CallTreeVisualisation::PrintRelationTree(mxdspldpth, OnlyPatterns.getValue());
-        CallTreeVisualisation::PrintCallTree(mxdspldpth, ClTre, OnlyPatterns.getValue());
-      }
-      else
-        CallTreeVisualisation::PrintCallTree(mxdspldpth, ClTre, OnlyPatterns.getValue());
-	  }
+			if(RelationTree.getValue()){
+				CallTreeVisualisation::PrintRelationTree(mxdspldpth, OnlyPatterns.getValue());
+				CallTreeVisualisation::PrintCallTree(mxdspldpth, ClTre, OnlyPatterns.getValue());
+			}else{
+				CallTreeVisualisation::PrintCallTree(mxdspldpth, ClTre, OnlyPatterns.getValue());
+			}
+		}
 
-		for (HPCPatternStatistic* Stat : Statistics)
-		{
+		for (HPCPatternStatistic* Stat : Statistics){
 			std::cout << std::endl << std::endl;
 			Stat->Calculate();
 			Stat->Print();
@@ -219,23 +223,26 @@ int main (int argc, const char** argv)
 		Statistics[5]->CSVExport("Cohesion.csv");
 		Statistics[6]->CSVExport("Halstead.csv");
 
-		/* Similarity Measures
-		std::vector<HPCParallelPattern*> SimPatterns;
+		// Similarity Measures
+		PatternGraphNode* RootNode = PatternGraph::GetInstance() -> GetRootNode();
 
-		HPCParallelPattern* IMVI = PatternGraph::GetInstance()->GetPattern(DesignSpace::ImplementationMechanism, "VariableIncrement");
-		HPCParallelPattern* FCGT = PatternGraph::GetInstance()->GetPattern(DesignSpace::FindingConcurrency, "GroupTask");
-		HPCParallelPattern* IMCO = PatternGraph::GetInstance()->GetPattern(DesignSpace::ImplementationMechanism, "Communication");
-		HPCParallelPattern* IMSY = PatternGraph::GetInstance()->GetPattern(DesignSpace::ImplementationMechanism, "Synchronization");
-
-		SimPatterns.push_back(IMCO);
-		SimPatterns.push_back(IMSY);
-
-		JaccardSimilarityStatistic Jaccard(SimPatterns, 2, 4, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern, 1000);
-
+		JaccardSimilarityStatistic Jaccard(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
 		Jaccard.Calculate();
 		Jaccard.Print();
-	*/
-		return retcode; //&& halstead;
+
+		WeightedJaccardSimilarityStatistic WeightedJaccard(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
+		WeightedJaccard.Calculate();
+		WeightedJaccard.Print();
+
+		OverlapCoefficientStatistic Overlap(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
+		Overlap.Calculate();
+		Overlap.Print();
+
+		CosineSimilarityStatistic Cosine(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
+		Cosine.Calculate();
+		Cosine.Print();
+
+		return retcode;
 	}
 	return 1;
 }
