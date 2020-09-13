@@ -32,11 +32,10 @@ void PatternGraphNodeVisitor::VisitFunctionNode(FunctionNode* Node){
 	static_cast<void>(Node); //Avoid unused parameter warning
 }
 void PatternGraphNodeVisitor::TraverseFunctionNode(FunctionNode* Node){
-	VisitedNodes.emplace(Node);
-	
-	for(auto Child : Node -> GetChildren())
-		if(VisitedNodes.find(Child) == VisitedNodes.end())
-			Child -> Accept(this);
+	//VisitedNodes.emplace returns true if it's the first time the node is traversed
+	if(VisitedNodes.emplace(Node -> GetHash()).second)
+		for(auto Child : Node -> GetChildren())
+				Child -> Accept(this);
 }
 void PatternGraphNodeVisitor::EndVisitFunctionNode(FunctionNode* Node){
 	static_cast<void>(Node); //Avoid unused parameter warning

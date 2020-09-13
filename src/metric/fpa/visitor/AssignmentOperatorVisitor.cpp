@@ -1,6 +1,6 @@
+#include "metric/fpa/PrettyPrinter.h"
 #include "metric/fpa/visitor/AssignmentOperatorVisitor.h"
 #include "metric/fpa/visitor/TransactionalFunctionVisitor.h"
-#include "metric/fpa/PrintPretty.h"
 #include "metric/fpa/ExternalInput.h"
 #include "metric/fpa/ExternalOutput.h"
 
@@ -19,7 +19,7 @@ bool AssignmentOperatorVisitor::VisitBinaryOperator(clang::BinaryOperator* Node)
 			FunctionPoint* FunctionPoint = new ExternalInput(
 					Visitor.det,
 					Visitor.ftr,
-					FunctionPointAnalysis::PrintPretty(Node)
+					PrettyPrinter::PrintPretty(Node)
 			);
 
 			this -> FunctionPoints.push_back(FunctionPoint);
@@ -29,7 +29,7 @@ bool AssignmentOperatorVisitor::VisitBinaryOperator(clang::BinaryOperator* Node)
 			FunctionPoint* FunctionPoint = new ExternalOutput(
 					Visitor.det,
 					Visitor.ftr,
-					FunctionPointAnalysis::PrintPretty(Node)
+					PrettyPrinter::PrintPretty(Node)
 			);
 
 			this -> FunctionPoints.push_back(FunctionPoint);

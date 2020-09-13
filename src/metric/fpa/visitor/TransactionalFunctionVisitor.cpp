@@ -1,12 +1,12 @@
+#include <metric/fpa/PrettyPrinter.h>
 #include "metric/fpa/visitor/TransactionalFunctionVisitor.h"
-#include "metric/fpa/PrintPretty.h"
 
 bool TransactionalFunctionVisitor::shouldVisitImplicitCode() const{
 	return (true);
 }
 
 bool TransactionalFunctionVisitor::VisitDeclRefExpr(clang::DeclRefExpr* Node){
-	UniqueTypes.emplace(FunctionPointAnalysis::PrintPretty(Node -> getType()));
+	UniqueTypes.emplace(PrettyPrinter::PrintPretty(Node -> getType()));
 
 	this -> det++;
 	this -> ftr = UniqueTypes.size();
@@ -15,7 +15,7 @@ bool TransactionalFunctionVisitor::VisitDeclRefExpr(clang::DeclRefExpr* Node){
 
 bool TransactionalFunctionVisitor::VisitVarDecl(clang::VarDecl* Node){
 	//Include the declared variable
-	UniqueTypes.emplace(FunctionPointAnalysis::PrintPretty(Node -> getType()));
+	UniqueTypes.emplace(PrettyPrinter::PrintPretty(Node -> getType()));
 
 	this -> det++;
 	this -> ftr = UniqueTypes.size();

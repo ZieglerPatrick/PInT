@@ -134,8 +134,6 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 
 				PatternCodeReg->isInMain = SourceMan.isInMainFile(LocStart);
 				LastNodeType = Pattern_Begin;
-
-				PatternBegin -> emplace(CallExpr, PatternCodeReg);
 			}
 			else if (!FnName.compare(PATTERN_END_CXX_FNNAME) || !FnName.compare(PATTERN_END_C_FNNAME))
 			{
@@ -170,8 +168,6 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 				#endif
 				PatternCodeReg->SetLastLine(SourceLoc.getLineNumber());
 				PatternCodeReg->SetEndSourceLoc(LocEnd);
-
-				PatternEnd -> emplace(CallExpr, PatternCodeReg);
 			}
 			// If no: search the called function for patterns
 			else
@@ -236,21 +232,10 @@ bool HPCPatternInstrVisitor::VisitCallExpr(clang::CallExpr *CallExpr)
 }
 
 HPCPatternInstrVisitor::HPCPatternInstrVisitor (clang::ASTContext* Context) :
-		Context(Context),
-		PatternBegin(new PatternMap()),
-		PatternEnd(new PatternMap())
-{
+		Context(Context){
 	using namespace clang::ast_matchers;
 	StatementMatcher StringArgumentMatcher = hasDescendant(stringLiteral().bind("patternstr"));
 
 	PatternBeginFinder.addMatcher(StringArgumentMatcher, &PatternBeginHandler);
 	PatternEndFinder.addMatcher(StringArgumentMatcher, &PatternEndHandler);
-}
-
-std::shared_ptr<PatternMap> HPCPatternInstrVisitor::GetPatternBegin(){
-	return (this -> PatternBegin);
-}
-
-std::shared_ptr<PatternMap> HPCPatternInstrVisitor::GetPatternEnd(){
-	return (this -> PatternEnd);
 }

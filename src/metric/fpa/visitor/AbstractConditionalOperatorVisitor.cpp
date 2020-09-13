@@ -1,7 +1,7 @@
-#include <metric/fpa/visitor/AbstractConditionalOperatorVisitor.h>
+#include "metric/fpa/PrettyPrinter.h"
+#include "metric/fpa/visitor/AbstractConditionalOperatorVisitor.h"
 #include "metric/fpa/visitor/TransactionalFunctionVisitor.h"
 #include "metric/fpa/ExternalInput.h"
-#include "metric/fpa/PrintPretty.h"
 
 AbstractConditionalOperatorVisitor::AbstractConditionalOperatorVisitor(clang::ASTContext* myContext, clang::SourceRange mySourceRange):
 	DeclRefExprVisitor(myContext, mySourceRange),
@@ -17,18 +17,16 @@ bool AbstractConditionalOperatorVisitor::VisitAbstractConditionalOperator(clang:
 	TransactionalFunctionVisitor Visitor;
 	Visitor.TraverseStmt(Node);
 
-	if
-	(
-			OverlapsWithEnvironment(Node -> getCond()) ||
-			OverlapsWithEnvironment(Node -> getTrueExpr()) ||
-			OverlapsWithEnvironment(Node -> getFalseExpr())
+	if(
+		OverlapsWithEnvironment(Node -> getCond()) ||
+		OverlapsWithEnvironment(Node -> getTrueExpr()) ||
+		OverlapsWithEnvironment(Node -> getFalseExpr())
 	)
 	{
-		FunctionPoint* FunctionPoint = new ExternalInput
-		(
+		FunctionPoint* FunctionPoint = new ExternalInput(
 				Visitor.det,
 				Visitor.ftr,
-				FunctionPointAnalysis::PrintPretty(Node)
+				PrettyPrinter::PrintPretty(Node)
 		);
 
 		this -> FunctionPoints.push_back(FunctionPoint);;

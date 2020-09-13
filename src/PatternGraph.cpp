@@ -1,10 +1,10 @@
 #include "PatternGraph.h"
 
 #include "HPCParallelPattern.h"
+#include "HPCError.h"
 
 #include <iostream>
 #include "clang/AST/ODRHash.h"
-#include "HPCError.h"
 
 #define SUITEDFORSTATSDEBUG
 //#define TEST
@@ -155,10 +155,10 @@ FunctionNode* PatternGraph::GetFunctionNode(clang::FunctionDecl* Decl)
 }
 
 
-	void PatternGraph::RegisterOnlyPatternRootNode(PatternCodeRegion* CodeReg)
-	{
-		this->OnlyPatternRootNodes.push_back(CodeReg);
-	}
+void PatternGraph::RegisterOnlyPatternRootNode(PatternCodeRegion* CodeReg)
+{
+	this->OnlyPatternRootNodes.push_back(CodeReg);
+}
 
 bool PatternGraph::RegisterFunction(clang::FunctionDecl* Decl)
 {
@@ -348,6 +348,28 @@ CallTreeNode* CallTree::registerNode(CallTreeNodeType NodeType, PatternCodeRegio
 	return Node;
 }
 
+void CallTreeNode::Accept(CallTreeVisitor* Visitor){
+	switch(this -> GetNodeType()){
+		case Root:
+			Visitor -> HandleRoot(this);
+			break;
+		case Function_Decl:
+			Visitor -> HandleFunctionDeclaration(this);
+			break;
+		case Pattern_Begin:
+			Visitor -> HandlePatternBegin(this);
+			break;
+		case Pattern_End:
+			Visitor -> HandlePatternEnd(this);
+			break;
+		case Function:
+			Visitor -> HandleFunctionCall(this);
+			break;
+		default:
+			break;
+	}
+}
+
 CallTreeNode* CallTree::registerNode(CallTreeNodeType NodeType, FunctionNode* FuncNode, CallTreeNodeType LastVisited, PatternCodeRegion* TopOfStack, FunctionNode* surroundingFunc)
 {
 	CallTreeNode* Node = new CallTreeNode(NodeType, FuncNode);
@@ -496,24 +518,27 @@ void CallTree::insertNodeIntoDeclVector(CallTreeNode* Node)
 
 void CallTree::appendAllDeclToCallTree(CallTreeNode* Node, int maxdepth)
 {
-	#ifdef DEBUG
-		std::cout << "appen AllDecl of " << *Node->GetID()<< std::endl;
-	#endif
-	if(maxdepth > 0 ){
-	 for(CallTreeNode* DeclOfCallee : DeclarationVector){
-		for(const auto &CalleeOfNodePair : *Node->GetCallees()){
-			CallTreeNode* CalleeOfNode = CalleeOfNodePair.second;
-			if(CalleeOfNode->GetNodeType() != Pattern_End  && CalleeOfNode->compare(DeclOfCallee)){
-				//falls die Kinder von Node die gleiche indentität haben wie eine deklaration im Declaration Vector dann...
-				#ifdef DEBUG
-					std::cout << "appended "<< *CalleeOfNode->GetID()<< "as a Caller to "<<*DeclOfCallee->GetID() << '\n';
-				#endif
-				appendCallerToNode(CalleeOfNode, DeclOfCallee);
-				appendAllDeclToCallTree(DeclOfCallee, maxdepth - 1);
+	//Traverse the tree and link every function call to its function declaration
+	class LinkFunctionToDeclarationVisitor : public CallTreeVisitor{
+		public:
+			LinkFunctionToDeclarationVisitor(int myMaximumRecursionDepth) :
+				CallTreeVisitor(myMaximumRecursionDepth){
 			}
-		 }
-		}
-	}
+
+
+			void TraverseFunctionCall(CallTreeNode* Node) override{
+				for(CallTreeNode* Declaration : *ClTre -> GetDeclarationVector()){
+					if(Declaration -> compare(Node)){
+						ClTre -> appendCallerToNode(Node, Declaration);
+						Declaration -> Accept(this);
+						//TODO break;? Wouldn't a match only occur once?
+					}
+				}
+			}
+	};
+
+	LinkFunctionToDeclarationVisitor Visitor(maxdepth);
+	Node -> Accept(&Visitor);
 }
 
 void CallTree::setUpTree(){

@@ -1,7 +1,7 @@
-#include <metric/fpa/visitor/UnaryOperatorVisitor.h>
+#include "metric/fpa/PrettyPrinter.h"
+#include "metric/fpa/visitor/UnaryOperatorVisitor.h"
 #include "metric/fpa/visitor/TransactionalFunctionVisitor.h"
 #include "metric/fpa/ExternalInput.h"
-#include "metric/fpa/PrintPretty.h"
 
 UnaryOperatorVisitor::UnaryOperatorVisitor(clang::ASTContext* myContext, clang::SourceRange mySourceRange):
 	DeclRefExprVisitor(myContext, mySourceRange),
@@ -18,11 +18,21 @@ bool UnaryOperatorVisitor::VisitUnaryOperator(clang::UnaryOperator* Node){
 	Visitor.TraverseStmt(Node);
 
 	if(OverlapsWithEnvironment(Node ->getSubExpr())){
-		FunctionPoint* FunctionPoint = new ExternalInput(
+		FunctionPoint* FunctionPoint;
+
+		if(Node -> isIncrementDecrementOp()){
+			FunctionPoint = new ExternalOutput(
 				Visitor.det,
 				Visitor.ftr,
-				FunctionPointAnalysis::PrintPretty(Node)
-		);
+				PrettyPrinter::PrintPretty(Node)
+			);
+		}else{
+			FunctionPoint = new ExternalInput(
+				Visitor.det,
+				Visitor.ftr,
+				PrettyPrinter::PrintPretty(Node)
+			);
+		}
 
 		this -> FunctionPoints.push_back(FunctionPoint);;
 	}

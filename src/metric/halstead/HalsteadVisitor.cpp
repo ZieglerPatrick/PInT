@@ -1,11 +1,7 @@
 #include "metric/halstead/HalsteadVisitor.h"
 
-HalsteadVisitor::HalsteadVisitor
-(
-	std::shared_ptr<PatternMap> NewPatternBegin,
-	std::shared_ptr<PatternMap> NewPatternEnd
-) :
-	ClangPatternVisitor(NewPatternBegin, NewPatternEnd){
+HalsteadVisitor::HalsteadVisitor(clang::ASTContext* myContext) :
+		ClangPatternVisitor(myContext){
 }
 
 bool HalsteadVisitor::shouldVisitImplicitCode() const{
@@ -69,10 +65,17 @@ bool HalsteadVisitor::WalkUpFromDeclRefExpr(clang::DeclRefExpr* Node){
 }
 
 bool HalsteadVisitor::HandleOperand(clang::Stmt* Node){
-	static_cast<void>(Node); //Avoid unused parameter warning
+	if(CodeRegions.empty())
+		return (true);
 
-	for(HPCParallelPattern* ParallelPattern : ParallelPatterns)
-		ParallelPattern -> IncrementNumberOfOperands(Node ->getStmtClassName());
+	std::vector<PatternCodeRegion*> AllCodeRegions;
+	PatternCodeRegion* Current = CodeRegions.back();
+
+	GraphAlgorithms::FindAllParentPatternCodeRegions(Current, AllCodeRegions);
+	AllCodeRegions.push_back(Current);
+
+	for(PatternCodeRegion* CodeRegion : CodeRegions)
+		CodeRegion -> GetPatternOccurrence() -> GetPattern() -> IncrementNumberOfOperands(Node -> getStmtClassName());
 	return (true);
 }
 
@@ -89,18 +92,25 @@ bool HalsteadVisitor::VisitStmt(clang::Stmt* Node){
 }
 
 bool HalsteadVisitor::HandleOperator(clang::Decl* Node){
-	static_cast<void>(Node); //Avoid unused parameter warning
 	return (HandleOperator(Node -> getDeclKindName()));
 }
 
 bool HalsteadVisitor::HandleOperator(clang::Stmt* Node){
-	static_cast<void>(Node); //Avoid unused parameter warning
 	return (HandleOperator(Node -> getStmtClassName()));
 }
 
 bool HalsteadVisitor::HandleOperator(std::string Node){
-	for(HPCParallelPattern* ParallelPattern : ParallelPatterns)
-		ParallelPattern -> IncrementNumberOfOperators(Node);
+	if(CodeRegions.empty())
+		return (true);
+
+	std::vector<PatternCodeRegion*> AllCodeRegions;
+	PatternCodeRegion* Current = CodeRegions.back();
+
+	GraphAlgorithms::FindAllParentPatternCodeRegions(Current, AllCodeRegions);
+	AllCodeRegions.push_back(Current);
+
+	for(PatternCodeRegion* CodeRegion : AllCodeRegions)
+		CodeRegion -> GetPatternOccurrence() -> GetPattern() -> IncrementNumberOfOperators(Node);
 	return (true);
 }
 
@@ -108,15 +118,31 @@ bool HalsteadVisitor::HandleOperator(std::string Node){
 // Pattern Hook Point
 //
 
-void HalsteadVisitor::VisitParallelPattern(HPCParallelPattern* ParallelPattern){
-	ParallelPatterns.push_back(ParallelPattern);
+void HalsteadVisitor::VisitPatternCodeRegion(PatternCodeRegion* CodeRegion){
+	CodeRegions.push_back(CodeRegion);
 }
 
-void HalsteadVisitor::EndVisitParallelPattern(HPCParallelPattern* ParallelPattern){
+void HalsteadVisitor::EndVisitPatternCodeRegion(PatternCodeRegion* CodeRegion){
 	Preconditions::CheckArgument(
-		!ParallelPatterns.empty(),
-		std::out_of_range("Tried to remove " + ParallelPattern -> GetPatternName() + " but stack was empty.")
+		!CodeRegions.empty(),
+		std::out_of_range("Tried to remove " + CodeRegion -> GetPatternOccurrence() -> GetPattern() -> GetPatternName() + " but stack was empty.")
 	);
 
-	ParallelPatterns.pop_back();
+	CodeRegions.pop_back();
+}
+
+//
+// Misc
+//
+
+bool HalsteadVisitor::WalkUpFromExprWithCleanups(clang::ExprWithCleanups* Node){
+	static_cast<void>(Node); //Avoid unused parameter warning
+	//Fuck if I know where they come from...
+	//They appear in combination with Pattern_Begin and Pattern_End, so we void 'em
+	return (true);
+}
+
+bool HalsteadVisitor::WalkUpFromImplicitCastExpr(clang::ImplicitCastExpr* Node){
+	static_cast<void>(Node); //Avoid unused parameter warning
+	return (true);
 }

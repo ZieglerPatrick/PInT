@@ -6,24 +6,50 @@
 
 /**
  * Base class for the individual AST visitors.
- * @tparam Derived The inheriting visitor
+ * @tparam Derived The the visitor implementing this template.
  */
 template <typename Derived> class FunctionPointVisitor : public clang::RecursiveASTVisitor<Derived>{
 	public:
-		explicit FunctionPointVisitor(clang::ASTContext* myContext, clang::SourceRange mySourceRange) :
-			Context(myContext),
-			SourceRange(mySourceRange),
-			IsBefore(Context -> getSourceManager()){
+		/**
+		 * Creates a new instance of the visitor.
+		 *
+		 * @param myContext The context required when comparing two source locations.
+		 * @param mySourceRange The range of the closest pattern code region.
+		 */
+		explicit FunctionPointVisitor(
+				clang::ASTContext* myContext,
+				clang::SourceRange mySourceRange
+		) :
+			CodeRegionSourceRange(mySourceRange),
+			IsBefore(myContext -> getSourceManager()),
+			Context(myContext){
 		}
+		/**
+		 * Contains all function points that have been detected by this visitor.
+		 */
 		std::vector<FunctionPoint*> FunctionPoints;
+	private:
 
-	protected:
-		clang::ASTContext* Context;
-		clang::SourceRange SourceRange;
+		/**
+		 * The source range of the closest pattern code region.
+		 */
+		clang::SourceRange CodeRegionSourceRange;
+		/**
+		 * A helper function determining the order in which two source locations appear.
+		 */
 		clang::BeforeThanCompare<clang::SourceLocation> IsBefore;
 
-		bool FullyContains(clang::SourceRange Source, clang::SourceRange Target){
-			return (!IsBefore(Target.getBegin(), Source.getBegin()) && !IsBefore(Source.getEnd(), Target.getEnd()));
+		/**
+		 * Checks if the source location is inside the code region.
+		 * @param SourceLocation An arbitrary position in the code.
+		 * @return true if the location is enclosed by the pattern code region.
+		 */
+		bool Contains(clang::SourceLocation SourceLocation){
+			if(IsBefore(SourceLocation, CodeRegionSourceRange.getBegin()))
+				return (false);
+			if(IsBefore(CodeRegionSourceRange.getEnd(), SourceLocation))
+				return (false);
+			return (true);
 		}
 
 		/**
@@ -57,34 +83,73 @@ template <typename Derived> class FunctionPointVisitor : public clang::Recursive
 
 			return (Visitor.DeclarationSourceRanges);
 		}
+	protected:
+		/**
+		 * The context is required to determine the order between source locations.
+		 */
+		clang::ASTContext* Context;
 
 		/**
-		 * Checks if the statement overlaps with the pattern. Returns true if
-		 * at least one variable referenced in the statement has been declared inside
-		 * the pattern.
-		 * @param Statement an arbitrary statement.
-		 * @return true if the statement overlaps with the pattern.
+		 * Checks if the provided source range intersects with the environment. I.e.
+		 * if it either start before or ends after the code region.
+		 * @param SourceRange an arbitrary source range.
+		 * @return true if the source range overlaps with the environment.
 		 */
-		bool OverlapsWithPattern(clang::Stmt* Statement){
-			//Check if at least one declaration is inside the code region
-			for(auto DeclarationRange : GetDeclarationSourceRanges(Statement))
-				if(!FullyContains(SourceRange, DeclarationRange))
+		bool OverlapsWithEnvironment(clang::SourceRange SourceRange){
+			return (!Contains(SourceRange.getBegin()) || !Contains(SourceRange.getEnd()));
+		}
+
+		/**
+		 * Checks if the statement overlaps with the environment.
+		 * @param Node an arbitrary statement.
+		 * @return true if the statement overlaps with the environment.
+		 */
+		bool OverlapsWithEnvironment(clang::Stmt* Node){
+			//Check if at least one declaration is outside the code region
+			for(auto DeclarationSourceRange : GetDeclarationSourceRanges(Node))
+				if(OverlapsWithEnvironment(DeclarationSourceRange))
 					return (true);
 			return (false);
 		}
 
 		/**
-		 * Checks if the statement overlaps with the environment. Returns true if
-		 * at least one variable referenced in the statement has been declared outside
-		 * the pattern.
-		 * @param Statement an arbitrary statement.
+		 * Checks if the declaration overlaps with the environment.
+		 * @param Node an declaration declaration.
 		 * @return true if the statement overlaps with the environment.
 		 */
-		bool OverlapsWithEnvironment(clang::Stmt* Statement){
+		bool OverlapsWithEnvironment(clang::Decl* Node){
+			return (OverlapsWithEnvironment(Node -> getSourceRange()));
+		}
+
+		/**
+		 * Checks if the provided source range intersects with the code region. I.e.
+		 * if its begin or end is included by the code region..
+		 * @param SourceRange an arbitrary source range.
+		 * @return true if the source range overlaps with the code region.
+		 */
+		bool OverlapsWithPattern(clang::SourceRange SourceRange){
+			return (Contains(SourceRange.getBegin()) || Contains(SourceRange.getEnd()));
+		}
+
+		/**
+		 * Checks if the statement overlaps with the pattern code region.
+		 * @param Statement an arbitrary statement.
+		 * @return true if the statement overlaps with the code region.
+		 */
+		bool OverlapsWithPattern(clang::Stmt* Node){
 			//Check if at least one declaration is outside the code region
-			for(auto DeclarationRange : GetDeclarationSourceRanges(Statement))
-				if(!FullyContains(SourceRange, DeclarationRange))
+			for(auto DeclarationSourceRange : GetDeclarationSourceRanges(Node))
+				if(OverlapsWithPattern(DeclarationSourceRange))
 					return (true);
 			return (false);
+		}
+
+		/**
+		 * Checks if the declaration overlaps with the pattern code region.
+		 * @param Node an arbitrary declaration.
+		 * @return true if the declaration overlaps with the code region.
+		 */
+		bool OverlapsWithPattern(clang::Decl* Node){
+			return (OverlapsWithPattern(Node -> getSourceRange()));
 		}
 };

@@ -4,9 +4,13 @@
 
 class HalsteadVisitor : public ClangPatternVisitor<HalsteadVisitor>{
 	public:
+		/**
+		 * Creates a new instance of this visitor.
+		 *
+		 * @param myContext The context required when comparing two source locations.
+		 */
 		explicit HalsteadVisitor(
-			std::shared_ptr<PatternMap> myPatternBegin,
-			std::shared_ptr<PatternMap> myPatternEnd
+				clang::ASTContext* myContext
 		);
 		bool shouldVisitImplicitCode() const;
 		// -----------------------------------------------------------------------------
@@ -38,16 +42,23 @@ class HalsteadVisitor : public ClangPatternVisitor<HalsteadVisitor>{
 		bool VisitDecl(clang::Decl* Node);
 		bool VisitStmt(clang::Stmt* Node);
 		// -----------------------------------------------------------------------------
+		// Sink
+		// Some artificial expressions are excluded
+		// -----------------------------------------------------------------------------
+		bool WalkUpFromExprWithCleanups(clang::ExprWithCleanups* Node);
+		bool WalkUpFromImplicitCastExpr(clang::ImplicitCastExpr* Node);
+		// -----------------------------------------------------------------------------
 		// Operators
 		// 	- Keywords (goto, for, ;. ->)
 		// 	- Operators (+, -, *, ...)
 		// 	- Function Calls
 		// 	- (everything not an operand)
 		// -----------------------------------------------------------------------------
-		virtual void VisitParallelPattern(HPCParallelPattern* ParallelPattern) override;
-		virtual void EndVisitParallelPattern(HPCParallelPattern* ParallelPattern) override;
+		virtual void VisitPatternCodeRegion(PatternCodeRegion* CodeRegion) override;
+		virtual void EndVisitPatternCodeRegion(PatternCodeRegion* CodeRegion) override;
+
 	private:
-		std::vector<HPCParallelPattern*> ParallelPatterns;
+		std::vector<PatternCodeRegion*> CodeRegions;
 		bool HandleOperand(clang::Stmt* Node);
 		bool HandleOperator(clang::Decl* Node);
 		bool HandleOperator(clang::Stmt* Node);

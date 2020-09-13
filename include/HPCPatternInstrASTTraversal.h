@@ -65,25 +65,6 @@ private:
 
 	clang::ASTContext *Context;
 	/**
-	 * Hookpoint for the delegator visitor.<br>
-	 * Associates the being of a pattern with the corresponding {@link PatternCodeRegion}.<br>
-	 * Modification of the original code to include the delegator visitor.
-	 *
-	 * @since Sept. 3nd 2020
-	 * @author Patrick Ziegler
-	 */
-	std::shared_ptr<PatternMap> PatternBegin;
-	/**
-	 * Hookpoints for the delegator visitor.<br>
-	 * Associates the end of a pattern with the corresponding {@link PatternCodeRegion}.<br>
-	 * Modification of the original code to include the delegator visitor.
-	 *
-	 * @since Sept. 3nd 2020
-	 * @author Patrick Ziegler
-	 */
-	std::shared_ptr<PatternMap> PatternEnd;
-
-	/**
  	 * This is a match finder to extract the string argument from the pattern instrumentation call and pass it to the HPCPatternBeginInstrHandler
  	 */
 	clang::ast_matchers::MatchFinder PatternBeginFinder;

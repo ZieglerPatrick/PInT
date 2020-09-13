@@ -27,8 +27,6 @@ class PatternGraphNodeVisitor : public PatternOccurrenceVisitor{
 		virtual void HandleFunctionNode(FunctionNode* Node);
 	private:
 		//Function calls may be cyclic. In that case, only visit the first occurrence.
-		std::set<PatternGraphNode*> VisitedNodes;
-		//Pattern occurrences and parallel patterns may only be visited once.
-		std::set<PatternOccurrence*> VisitedPatternOccurrences;
-		std::set<HPCParallelPattern*> VisitedParallelPatterns;
+		//We use hash values instead of pointers.
+		std::set<unsigned> VisitedNodes;
 }; 

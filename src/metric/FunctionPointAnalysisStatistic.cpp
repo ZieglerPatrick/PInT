@@ -1,6 +1,5 @@
+#include <metric/fpa/PrettyPrinter.h>
 #include "metric/FunctionPointAnalysisStatistic.h"
-#include "metric/fpa/PrintPretty.h"
-
 #include <iostream>
 #include <fstream>
 
@@ -10,11 +9,15 @@
 FunctionPointAnalysisStatistic::~FunctionPointAnalysisStatistic(){}
 
 void FunctionPointAnalysisStatistic::Calculate(){
-	//Calculated for each pattern individually
+	for(HPCParallelPattern* Pattern : PatternGraph::GetInstance() -> GetAllPatterns()){
+		FunctionPointCounter Counter = Calculate(Pattern);
+		FunctionPointMap.emplace(Pattern, Counter);
+	}
 }
 
 void FunctionPointAnalysisStatistic::Print(){
 	for(HPCParallelPattern* Pattern : PatternGraph::GetInstance() -> GetAllPatterns()){
+		FunctionPointCounter Counter = FunctionPointMap[Pattern];
 		std::cout << "Pattern " << Pattern -> GetPatternName() << " has:" << std::endl;
 
 		#ifdef DEBUG
@@ -25,7 +28,7 @@ void FunctionPointAnalysisStatistic::Print(){
 					  << std::endl;
 
 			std::cout << "\t\tLabel: "
-					  << FunctionPoint -> label
+					  << FunctionPoint -> Label
 					  << std::endl;
 
 			printf("\t\t| %5s | %5s | %5s | %10s |\n",
@@ -36,10 +39,10 @@ void FunctionPointAnalysisStatistic::Print(){
 			);
 
 			printf("\t\t| %5d | %5d | %5d | %10s |\n",
-					FunctionPoint -> det,
-					FunctionPoint -> ret,
-					FunctionPoint -> ftr,
-					FunctionPointAnalysis::PrintPretty(FunctionPoint -> GetComplexity()).c_str()
+					FunctionPoint -> DataElementTypes,
+					FunctionPoint -> RecordElementTypes,
+					FunctionPoint -> FileTypesReferenced,
+					PrettyPrinter::PrintPretty(FunctionPoint -> GetComplexity()).c_str()
 			);
 
 			std::cout << "\t}"
@@ -47,9 +50,9 @@ void FunctionPointAnalysisStatistic::Print(){
 		}
 		#endif
 
-		std::cout << "\tUnadjusted Function Points: " << CalculateUnadjustedFunctionPoints(Pattern) << std::endl;
-		std::cout << "\tValue Adjustment Factor: " << CalculateValueAdjustmentFactor() << std::endl;
-		std::cout << "\tFunction Point Count: " << CalculateFunctionPointCount(Pattern) << std::endl;
+		std::cout << "\tUnadjusted Function Points: " << Counter.UnadjustedFunctionPoints << std::endl;
+		std::cout << "\tValue Adjustment Factor: " << Counter.ValueAdjustmentFactor << std::endl;
+		std::cout << "\tFunction Point Count: " << Counter.FunctionPointCount << std::endl;
 		std::cout << std::endl;
 	}
 }
@@ -61,15 +64,26 @@ void FunctionPointAnalysisStatistic::FunctionPointAnalysisStatistic::CSVExport(s
 	File << IO::CSVPrintLine("PatterName", "UFP", "VAF", "FPC");
 
 	for(HPCParallelPattern* Pattern : PatternGraph::GetInstance() -> GetAllPatterns()){
+		FunctionPointCounter Counter = FunctionPointMap[Pattern];
 		File << IO::CSVPrintLine(
 				Pattern -> GetPatternName(),
-				CalculateUnadjustedFunctionPoints(Pattern),
-				CalculateValueAdjustmentFactor(),
-				CalculateFunctionPointCount(Pattern)
+				Counter.UnadjustedFunctionPoints,
+				Counter.ValueAdjustmentFactor,
+				Counter.FunctionPointCount
 		);
 	}
 
 	File.close();
+}
+
+FunctionPointAnalysisStatistic::FunctionPointCounter FunctionPointAnalysisStatistic::Calculate(HPCParallelPattern* Pattern){
+	FunctionPointCounter Counter;
+
+	Counter.FunctionPointCount = CalculateUnadjustedFunctionPoints(Pattern);
+	Counter.ValueAdjustmentFactor = CalculateValueAdjustmentFactor();
+	Counter.UnadjustedFunctionPoints = CalculateFunctionPointCount(Pattern);
+
+	return (Counter);
 }
 
 

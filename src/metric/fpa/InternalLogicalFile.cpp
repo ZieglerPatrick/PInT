@@ -6,8 +6,8 @@
 #define DET_LOW		(19)
 #define DET_MEDIUM 	(50)
 
-InternalLogicalFile::InternalLogicalFile(int DataElementType, int RecordElementType, std::string Label) :
-	FunctionPoint(DataElementType, RecordElementType, 0, Label){
+InternalLogicalFile::InternalLogicalFile(int myDataElementTypes, int myRecordElementTypes, std::string myLabel) :
+	FunctionPoint(myDataElementTypes, myRecordElementTypes, 0, myLabel){
 }
 
 int InternalLogicalFile::GetWeight(){
@@ -20,24 +20,24 @@ std::string InternalLogicalFile::GetType(){
 }
 
 FunctionPointComplexity InternalLogicalFile::GetComplexity(){
-	if(this -> ret <= RET_LOW)
-		if(this -> det <= DET_LOW)
+	if(this -> RecordElementTypes <= RET_LOW)
+		if(this -> DataElementTypes <= DET_LOW)
 			return (LOW);
-		else if(this -> det <= DET_MEDIUM)
+		else if(this -> DataElementTypes <= DET_MEDIUM)
 			return (LOW);
 		else
 			return (AVERAGE);
-	else if(this -> ret <= RET_MEDIUM)
-		if(this -> det <= DET_LOW)
+	else if(this -> RecordElementTypes <= RET_MEDIUM)
+		if(this -> DataElementTypes <= DET_LOW)
 			return (LOW);
-		else if(this -> det <= DET_MEDIUM)
+		else if(this -> DataElementTypes <= DET_MEDIUM)
 			return (AVERAGE);
 		else
 			return (HIGH);
 	else
-		if(this -> det <= DET_LOW)
+		if(this -> DataElementTypes <= DET_LOW)
 			return (AVERAGE);
-		else if(this -> det <= DET_MEDIUM)
+		else if(this -> DataElementTypes <= DET_MEDIUM)
 			return (HIGH);
 		else
 			return (HIGH);

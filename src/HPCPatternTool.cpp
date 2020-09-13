@@ -25,7 +25,8 @@
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "llvm/Support/CommandLine.h"
 #include "clang/Tooling/ArgumentsAdjusters.h"
-#include "clang/DelegatorFrontendAction.h"
+#include "clang/ASTFrontendDelegatorAction.h"
+#include "clang/ASTFrontendInstrumentationAction.h"
 
 #ifndef HPCERROR_H
 #include "HPCError.h"
@@ -173,7 +174,7 @@ int main (int argc, const char** argv){
 		/* Run the tool with options and source files provided */
 		int retcode = 0;
 		try{
-			retcode = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<DelegatorFrontendAction>().get());
+			retcode = HPCPatternTool.run(clang::tooling::newFrontendActionFactory<ASTFrontendInstrumentationAction>().get());
 
 			#ifdef DEBUG
 				std::cout << "\nPrinting out DeclarationVector: " << std::endl;
@@ -185,15 +186,13 @@ int main (int argc, const char** argv){
 					}
 				}
 			#endif
-			if(!NoTree.getValue()){
-				ClTre->appendAllDeclToCallTree(ClTre->getRoot(), MAX_DEPTH);
-				ClTre->setUpTree();
-			}
 		}catch(std::exception& terminate){
 			std::cout << terminate.what();
 			return 0;
 		}
 		try{
+			ClTre->appendAllDeclToCallTree(ClTre->getRoot(), MAX_DEPTH);
+			ClTre->setUpTree();
 			ClTre->lookIfTreeIsCorrect();
 		}catch(TooManyBeginsException& begins){
 			begins.what();
@@ -208,6 +207,9 @@ int main (int argc, const char** argv){
 				CallTreeVisualisation::PrintCallTree(mxdspldpth, ClTre, OnlyPatterns.getValue());
 			}
 		}
+
+		//Has to be done after the pattern graph was constructed
+		HPCPatternTool.run(clang::tooling::newFrontendActionFactory<ASTFrontendDelegatorAction>().get());
 
 		for (HPCPatternStatistic* Stat : Statistics){
 			std::cout << std::endl << std::endl;

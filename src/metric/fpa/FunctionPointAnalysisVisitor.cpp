@@ -1,4 +1,4 @@
-#include "metric/fpa/visitor/FunctionPointAnalysisVisitor.h"
+#include "metric/fpa/FunctionPointAnalysisVisitor.h"
 #include "metric/fpa/visitor/DeclRefExprVisitor.h"
 #include "metric/fpa/visitor/BinaryOperatorVisitor.h"
 #include "metric/fpa/visitor/AssignmentOperatorVisitor.h"
@@ -6,18 +6,12 @@
 #include "metric/fpa/visitor/UnaryOperatorVisitor.h"
 #include "metric/fpa/visitor/AbstractConditionalOperatorVisitor.h"
 
-FunctionPointAnalysisVisitor::FunctionPointAnalysisVisitor
-(
-	std::shared_ptr<PatternMap> NewPatternBegin,
-	std::shared_ptr<PatternMap> NewPatternEnd,
-	clang::ASTContext* NewContext
-) :
-	ClangPatternVisitor(NewPatternBegin, NewPatternEnd),
-	Context(NewContext){
+FunctionPointAnalysisVisitor::FunctionPointAnalysisVisitor(clang::ASTContext* myContext) :
+		ClangPatternVisitor(myContext),
+		Context(myContext){
 }
 
 bool FunctionPointAnalysisVisitor::TraverseDeclRefExpr(clang::DeclRefExpr* Node){
-	//std::cout << CodeRegions.size() << ", " << "TraverseDeclRefExpr" << std::endl;
 	if(!CodeRegions.empty()){
 		DeclRefExprVisitorImplementation Visitor(Context, CodeRegions.back() -> GetSourceRange());
 		Visitor.TraverseDeclRefExpr(Node);
@@ -107,7 +101,16 @@ void FunctionPointAnalysisVisitor::EndVisitPatternCodeRegion(PatternCodeRegion* 
 //-------------------------------------------------------------------------------//
 
 void FunctionPointAnalysisVisitor::AddFunctionPoint(FunctionPoint* NewFunctionPoint){
-	for(auto CodeRegion : CodeRegions){
+	if(CodeRegions.empty())
+		return;
+
+	std::vector<PatternCodeRegion*> AllCodeRegions;
+	PatternCodeRegion* Current = CodeRegions.back();
+
+	GraphAlgorithms::FindAllParentPatternCodeRegions(Current, AllCodeRegions);
+	AllCodeRegions.push_back(Current);
+
+	for(auto CodeRegion : AllCodeRegions){
 		CodeRegion -> GetPatternOccurrence() -> GetPattern() -> AddFunctionPoint(
 				NewFunctionPoint
 		);

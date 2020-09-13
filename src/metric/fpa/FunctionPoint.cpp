@@ -2,15 +2,15 @@
 
 FunctionPoint::FunctionPoint
 (
-	int DataElementType,
-	int RecordElementType,
-	int FileTypeReferenced,
-	std::string Label
+	int myDataElementTypes,
+	int myRecordElementTypes,
+	int myFileTypesReferenced,
+	std::string myLabel
 ) :
-	det(DataElementType),
-	ret(RecordElementType),
-	ftr(FileTypeReferenced),
-	label(Label){
+	DataElementTypes(myDataElementTypes),
+	RecordElementTypes(myRecordElementTypes),
+	FileTypesReferenced(myFileTypesReferenced),
+	Label(myLabel){
 }
 
 FunctionPoint::~FunctionPoint(){}

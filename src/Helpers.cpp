@@ -31,6 +31,24 @@ std::vector<PatternOccurrence*> PatternHelpers::GetPatternOccurrences(std::vecto
 	return PatternOccurrences;
 }
 
+void GraphAlgorithms::FindAllParentPatternCodeRegions(PatternCodeRegion* Start, std::vector<PatternCodeRegion*>& Parents){
+	class ParentVisitor : public PatternGraphNodeVisitor{
+		public:
+			std::vector<PatternCodeRegion*> CodeRegions;
+			void HandlePatternCodeRegion(PatternCodeRegion* Node) override{
+				CodeRegions.push_back(Node);
+
+				for(PatternGraphNode* Parent : Node -> GetParents())
+					Parent -> Accept(this);
+			}
+			//void HandleFunctionNode(FunctionNode* Node) override{}
+	};
+
+	ParentVisitor Visitor;
+	Start -> Accept(&Visitor);
+	Parents.insert(Parents.end(), Visitor.CodeRegions.begin(), Visitor.CodeRegions.end());
+}
+
 /**
  * @brief A tree operation that marks every tree node with the label corresponding to its connected component.
  * Calls GraphAlgorithms::MarkConnectedComponents(PatternGraphNode*, int).

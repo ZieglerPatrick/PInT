@@ -7,6 +7,6 @@
  */
 struct FunctionPointComparator{
 	bool operator()(FunctionPointPointer lhs, FunctionPointPointer rhs){
-		return ((lhs -> GetType() + lhs -> label) < (rhs -> GetType() + rhs -> label));
+		return ((lhs -> GetType() + lhs -> Label) < (rhs -> GetType() + rhs -> Label));
 	}
 };

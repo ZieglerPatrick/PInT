@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "visitor/PatternGraphNodeVisitor.h"
+#include "visitor/CallTreeVisitor.h"
 
 
 //#define TOOMANYBEGINSDEBUG
@@ -489,6 +490,17 @@ public:
 		* Constructor of a CallTreeNode eather corresponding to a Pattern_End or a Pattern_Begin. When the specific PatternCodeRegion is not known during the generation of the CallTreeNode.
 		**/
 	CallTreeNode(CallTreeNodeType type, std::string identification);
+
+
+	/**
+	 * The entry point for the call tree visitor.
+	 * The visitor is applied to this node and all its child nodes.
+	 *
+	 * @param Visitor an instance of the call tree visitor.
+	 * @since Sept. 10th 2020
+	 * @author Patrick Ziegler
+	 */
+	void Accept(CallTreeVisitor* Visitor);
 	/**
 		* Returns the Identification of a CallTreeNode
 		**/
