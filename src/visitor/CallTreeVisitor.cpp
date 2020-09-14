@@ -165,11 +165,11 @@ void CallTreeVisitor::HandleFunctionCall(CallTreeNode* Node){
 void CallTreeVisitor::BeforeCall(CallTreeNode* Node){
 	auto myRecursionDepth = RecursionDepth.find(Node);
 
-	//The node is isn't in the map
+	//The node is isn't in the map -> initialize and set to 1
 	if(myRecursionDepth == RecursionDepth.end()){
-		RecursionDepth.emplace(Node, 1);
+		RecursionDepth[Node] = 1;
 	}else{
-		RecursionDepth.emplace(Node, myRecursionDepth -> second);
+		RecursionDepth[Node]++;
 	}
 }
 
@@ -181,11 +181,11 @@ void CallTreeVisitor::AfterCall(CallTreeNode* Node){
 
 	auto myRecursionDepth = RecursionDepth.find(Node);
 
-	//The node is isn't in the map
-	if(myRecursionDepth == RecursionDepth.end()){
-		RecursionDepth.emplace(Node, 1);
+	//This is the last instance of the node -> remove entry
+	if(myRecursionDepth -> second == 1){
+		RecursionDepth.erase(Node);
 	}else{
-		RecursionDepth.emplace(Node, myRecursionDepth -> second);
+		RecursionDepth[Node]--;
 	}
 }
 

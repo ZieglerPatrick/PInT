@@ -516,7 +516,7 @@ void CallTree::insertNodeIntoDeclVector(CallTreeNode* Node)
 	DeclarationVector.push_back(Node);
 }
 
-void CallTree::appendAllDeclToCallTree(CallTreeNode* Node, int maxdepth)
+void CallTree::appendAllDeclToCallTree(CallTreeNode* Root, int maxdepth)
 {
 	//Traverse the tree and link every function call to its function declaration
 	class LinkFunctionToDeclarationVisitor : public CallTreeVisitor{
@@ -538,7 +538,7 @@ void CallTree::appendAllDeclToCallTree(CallTreeNode* Node, int maxdepth)
 	};
 
 	LinkFunctionToDeclarationVisitor Visitor(maxdepth);
-	Node -> Accept(&Visitor);
+	Root -> Accept(&Visitor);
 }
 
 void CallTree::setUpTree(){
