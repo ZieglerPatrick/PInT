@@ -39,7 +39,7 @@ include_directories(${CLANG_INCLUDE_DIRS} ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS} ${CLANG_DEFINITIONS})
 set(CMAKE_BUILD_TYPE Debug)
 
-add_llvm_executable (HPC-pattern-tool HPCPatternTool.cpp HPCPatternInstrASTTraversal.cpp HPCParallelPattern.cpp HPCPatternInstrHandler.cpp TreeVisualisation.cpp HPCPatternStatistics.cpp Helpers.cpp SimilarityMetrics.cpp PatternGraph.cpp DesignSpaces.cpp HPCRunningStats.cpp ToolInformation.cpp HPCError.cpp)
+add_llvm_executable (HPC-pattern-tool HPCPatternTool.cpp HPCPatternInstrASTTraversal.cpp HPCParallelPattern.cpp HPCPatternInstrHandler.cpp TreeVisualisation.cpp HPCPatternStatistics.cpp Helpers.cpp SimilarityMetrics.cpp PatternGraph.cpp DesignSpaces.cpp HPCRunningStats.cpp ToolInformation.cpp HPCError.cpp CallTreeVisitor.cpp)
 target_compile_options(HPC-pattern-tool
   PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fexceptions >
 	PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti >

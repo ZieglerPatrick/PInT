@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DesignSpaces.h"
+#include "CallTreeVisitor.h"
 
 #include <string>
 #include <vector>
@@ -468,6 +469,13 @@ public:
 		* Constructor of a CallTreeNode eather corresponding to a Pattern_End or a Pattern_Begin. When the specific PatternCodeRegion is not known during the generation of the CallTreeNode.
 		**/
 	CallTreeNode(CallTreeNodeType type, std::string identification);
+	/**
+	 * The entry point for the call tree visitor. Starting from this node, the visitor
+	 * will traverse the all children in a top-down fashion.
+	 *
+	 * @param Visitor an instance of the call tree visitor.
+	 */
+	void Accept(CallTreeVisitor* Visitor);
 	/**
 		* Returns the Identification of a CallTreeNode
 		**/

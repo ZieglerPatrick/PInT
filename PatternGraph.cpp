@@ -495,21 +495,31 @@ void CallTree::appendAllDeclToCallTree(CallTreeNode* Node, int maxdepth)
 	#ifdef DEBUG
 		std::cout << "appen AllDecl of " << *Node->GetID()<< std::endl;
 	#endif
-	if(maxdepth > 0 ){
-	 for(CallTreeNode* DeclOfCallee : DeclarationVector){
-		for(const auto &CalleeOfNodePair : *Node->GetCallees()){
-			CallTreeNode* CalleeOfNode = CalleeOfNodePair.second;
-			if(CalleeOfNode->GetNodeType() != Pattern_End  && CalleeOfNode->compare(DeclOfCallee)){
-				//falls die Kinder von Node die gleiche indentität haben wie eine deklaration im Declaration Vector dann...
-				#ifdef DEBUG
-					std::cout << "appended "<< *CalleeOfNode->GetID()<< "as a Caller to "<<*DeclOfCallee->GetID() << '\n';
-				#endif
-				appendCallerToNode(CalleeOfNode, DeclOfCallee);
-				appendAllDeclToCallTree(DeclOfCallee, maxdepth - 1);
+			//Traverse the tree and link every function call to its function declaration
+	class LinkFunctionToDeclarationVisitor : public CallTreeVisitor{
+		public:
+			LinkFunctionToDeclarationVisitor(int myMaximumRecursionDepth) :
+				CallTreeVisitor(myMaximumRecursionDepth){
 			}
-		 }
-		}
-	}
+
+			void TraverseFunctionCall(CallTreeNode* Node) override{
+				for(CallTreeNode* Declaration : *ClTre -> GetDeclarationVector()){
+					if(Declaration -> compare(Node)){
+						//falls die Kinder von Node die gleiche indentität haben wie eine deklaration im Declaration Vector dann...
+						#ifdef DEBUG
+							std::cout << "appended "<< *CalleeOfNode->GetID()<< "as a Caller to "<<*DeclOfCallee->GetID() << '\n';
+						#endif
+						ClTre -> appendCallerToNode(Node, Declaration);
+						//Continue with the function declaration corresponding to the function call
+						Declaration -> Accept(this);
+						break;
+					}
+				}
+			}
+	};
+
+	LinkFunctionToDeclarationVisitor Visitor(maxdepth);
+	Root -> Accept(&Visitor);
 }
 
 void CallTree::setUpTree(){
@@ -693,6 +703,29 @@ CallTreeNode::CallTreeNode(CallTreeNodeType type, std::string identification): N
 		std::cout << "Node of:"<<identification<< " is created"<< '\n';
 		std::cout << "Node Type = " << type << std::endl;
 	#endif
+}
+
+void CallTreeNode::Accept(CallTreeVisitor* Visitor){
+	switch(this -> GetNodeType()){
+		case Root:
+			Visitor -> HandleRoot(this);
+			break;
+		case Function_Decl:
+			Visitor -> HandleFunctionDeclaration(this);
+			break;
+		case Pattern_Begin:
+			Visitor -> HandlePatternBegin(this);
+			break;
+		case Pattern_End:
+			Visitor -> HandlePatternEnd(this);
+			break;
+		case Function:
+			Visitor -> HandleFunctionCall(this);
+			break;
+		default:
+			//Should not happen
+			break;
+	}
 }
 
 Identification* CallTreeNode::GetID()
