@@ -531,7 +531,7 @@ void CallTree::appendAllDeclToCallTree(CallTreeNode* Root, int maxdepth)
 					if(Declaration -> compare(Node)){
 						ClTre -> appendCallerToNode(Node, Declaration);
 						Declaration -> Accept(this);
-						//TODO break;? Wouldn't a match only occur once?
+						break;
 					}
 				}
 			}

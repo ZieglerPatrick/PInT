@@ -42,7 +42,7 @@ template <typename Derived> class DeclRefExprVisitor : public FunctionPointVisit
 
 		/**
 		 * A function will be counted as an external output if it has been declared
-		 * outside the code region.
+		 * outside the current code region.
 		 * @param Node the node associated with the function reference.
 		 * @return true
 		 */

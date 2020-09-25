@@ -19,17 +19,17 @@ bool AssignmentOperatorVisitor::VisitBinaryOperator(clang::BinaryOperator* Node)
 			FunctionPoint* FunctionPoint = new ExternalInput(
 					Visitor.det,
 					Visitor.ftr,
-					PrettyPrinter::PrintPretty(Node)
+					PrettyPrinter::PrintPretty(Node) + " (" + Node -> getOpcodeStr().str() + ")"
 			);
 
 			this -> FunctionPoints.push_back(FunctionPoint);
 		//e.g. x = ...
-		//where is is outside the pattern
+		//where x is outside the pattern
 		}else if(OverlapsWithEnvironment(Node -> getLHS())){
 			FunctionPoint* FunctionPoint = new ExternalOutput(
 					Visitor.det,
 					Visitor.ftr,
-					PrettyPrinter::PrintPretty(Node)
+					PrettyPrinter::PrintPretty(Node) + " (" + Node -> getOpcodeStr().str() + ")"
 			);
 
 			this -> FunctionPoints.push_back(FunctionPoint);

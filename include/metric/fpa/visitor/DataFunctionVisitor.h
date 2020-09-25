@@ -78,7 +78,7 @@ class ObjectVisitor : public clang::RecursiveASTVisitor<ObjectVisitor>{
 		/**
 		 * A field represents a variable and counts as a data element type.
 		 * @param Node The node associated with the field.
-		 * @return false if the visitation was terminated early, true otherwise
+		 * @return true
 		 */
 		bool VisitFieldDecl(clang::FieldDecl* Node);
 		/**
@@ -91,7 +91,7 @@ class ObjectVisitor : public clang::RecursiveASTVisitor<ObjectVisitor>{
 		/**
 		 * Represents a constructor and counts as record element type.
 		 * @param Node The node associated with the constructor.
-		 * @return false if the visitation was terminated early, true otherwise
+		 * @return true
 		 */
 		bool WalkUpFromCXXConstructorDecl(clang::CXXConstructorDecl* Node);
 		/**
@@ -100,7 +100,7 @@ class ObjectVisitor : public clang::RecursiveASTVisitor<ObjectVisitor>{
 		 * the node from {@link VisitCXXMethodDecl}.
 		 *
 		 * @param Node the node associated with the destructor.
-		 * @return false if the visitation was terminated early, true otherwise
+		 * @return true
 		 */
 		bool WalkUpFromCXXDestructorDecl(clang::CXXDestructorDecl* Node);
 		/**
@@ -109,7 +109,15 @@ class ObjectVisitor : public clang::RecursiveASTVisitor<ObjectVisitor>{
 		 * the node from {@link VisitCXXMethodDecl}.
 		 *
 		 * @param Node the node associated with the conversion declarations.
-		 * @return false if the visitation was terminated early, true otherwise
+		 * @return true
 		 */
 		bool WalkUpFromCXXConversionDecl(clang::CXXConversionDecl* Node);
+		/**
+		 * Visits the class declaration to count the total number of base classes.
+		 * Each base class is a potential subgroup and thus a record element type.
+		 *
+		 * @param Node the node associated with the current class.
+		 * @return true
+		 */
+		bool VisitCXXRecordDecl(clang::CXXRecordDecl* Node);
 };

@@ -9,7 +9,7 @@ AbstractConditionalOperatorVisitor::AbstractConditionalOperatorVisitor(clang::AS
 }
 
 bool AbstractConditionalOperatorVisitor::VisitAbstractConditionalOperator(clang::AbstractConditionalOperator* Node){
-	//Skip invalid operators
+	//Skip subexpressions
 	if(!IsFirstOccurrence)
 		return (true);
 

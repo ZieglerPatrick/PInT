@@ -35,13 +35,18 @@ void GraphAlgorithms::FindAllParentPatternCodeRegions(PatternCodeRegion* Start, 
 	class ParentVisitor : public PatternGraphNodeVisitor{
 		public:
 			std::vector<PatternCodeRegion*> CodeRegions;
+
 			void HandlePatternCodeRegion(PatternCodeRegion* Node) override{
 				CodeRegions.push_back(Node);
 
 				for(PatternGraphNode* Parent : Node -> GetParents())
 					Parent -> Accept(this);
 			}
-			//void HandleFunctionNode(FunctionNode* Node) override{}
+
+			void HandleFunctionNode(FunctionNode* Node) override{
+				for(PatternGraphNode* Parent : Node -> GetParents())
+					Parent -> Accept(this);
+			}
 	};
 
 	ParentVisitor Visitor;

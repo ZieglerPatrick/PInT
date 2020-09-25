@@ -1,24 +1,382 @@
+ CALL TREE VISUALISATION 
+main (Hash: 1002402201)
+--> testInternalLogicalFile (Hash: 3325933014)
+    --> Unknown: ILF(ILFDeclRefExpr)
+        --> foo (Hash: 1903633638)
+    --> END Unknown: ILF(ILFDeclRefExpr)
+    --> Unknown: ILF(ILFVarDecl)
+    --> END Unknown: ILF(ILFVarDecl)
+    --> Unknown: ILF(ILFInheritance)
+    --> END Unknown: ILF(ILFInheritance)
+--> testExternalInterfaceFile (Hash: 1024203474)
+    --> Unknown: EIF(EIFDeclRefExpr)
+    --> END Unknown: EIF(EIFDeclRefExpr)
+    --> Unknown: EIF(Empty)
+    --> END Unknown: EIF(Empty)
+--> testExternalInput (Hash: 2122614888)
+    --> Unknown: EI(EIConditional)
+    --> END Unknown: EI(EIConditional)
+    --> Unknown: EI(EIAssignment)
+    --> END Unknown: EI(EIAssignment)
+    --> Unknown: EI(EIBinary)
+    --> END Unknown: EI(EIBinary)
+    --> Unknown: EI(EIUnary)
+    --> END Unknown: EI(EIUnary)
+    --> Unknown: EI(EIVarDecl)
+    --> END Unknown: EI(EIVarDecl)
+--> testExternalOutput (Hash: 3461244145)
+    --> Unknown: EO(EOAssignment)
+    --> END Unknown: EO(EOAssignment)
+
+
+Pattern ILF occurs 3 times.
+Pattern EIF occurs 2 times.
+Pattern EI occurs 5 times.
+Pattern EO occurs 1 times.
+
+
+Pattern ILF has
+Fan-In: 0
+Fan-Out: 0
+Pattern EIF has
+Fan-In: 0
+Fan-Out: 0
+Pattern EI has
+Fan-In: 0
+Fan-Out: 0
+Pattern EO has
+Fan-In: 0
+Fan-Out: 0
+
+
+ILF has 14 line(s) of code in total.
+3 occurrences in code.
+ILFDeclRefExpr: 6 LOC in 1 regions.
+ILFVarDecl: 4 LOC in 1 regions.
+ILFInheritance: 4 LOC in 1 regions.
+Line(s) of code respectively.
+
+EIF has 5 line(s) of code in total.
+2 occurrences in code.
+EIFDeclRefExpr: 4 LOC in 1 regions.
+Empty: 1 LOC in 1 regions.
+Line(s) of code respectively.
+
+EI has 22 line(s) of code in total.
+5 occurrences in code.
+EIConditional: 4 LOC in 1 regions.
+EIAssignment: 6 LOC in 1 regions.
+EIBinary: 4 LOC in 1 regions.
+EIUnary: 4 LOC in 1 regions.
+EIVarDecl: 4 LOC in 1 regions.
+Line(s) of code respectively.
+
+EO has 4 line(s) of code in total.
+1 occurrences in code.
+EOAssignment: 4 LOC in 1 regions.
+Line(s) of code respectively.
+
+
+
+WARNING: Results from the Cyclomatic Complexity Statistic might be inconsistent!
+Number of Edges: 11
+Number of Nodes: 11
+Number of Connected Components: 1
+Resulting Cyclomatic Complexity: 2
+
+
 Pattern ILF has:
-         Type | Label                        |  #DET |  #RET |  #FTR | Complexity
-          ILF | struct Person A(32, "Olalf") |     4 |     3 |     0 |        Low
-          
+        EO{
+                Label: void foo() {
+}
+
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     0 |     1 |        Low |
+        }
+        ILF{
+                Label: class Person Olaf(32, "Olaf")
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     3 |     2 |     0 |        Low |
+        }
+        ILF{
+                Label: class Student Beatrice("Beatrice", "gldwth")
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     2 |     0 |        Low |
+        }
+        ILF{
+                Label: int x
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        Unadjusted Function Points: 22
+        Value Adjustment Factor: 0.91
+        Function Point Count: 25
+
 Pattern EIF has:
-         Type | Label                        |  #DET |  #RET |  #FTR | Complexity
-          EIF | x                            |     1 |     1 |     0 |        Low
-           EO | x = 42                       |     1 |     0 |     1 |        Low
-           
+        EIF{
+                Label: int x
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EO{
+                Label: x = 42 (=)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     0 |     1 |        Low |
+        }
+        Unadjusted Function Points: 8
+        Value Adjustment Factor: 0.91
+        Function Point Count: 9
+
 Pattern EI has:
-         Type | Label                        |  #DET |  #RET |  #FTR | Complexity
-          EIF | int x = 1                    |     1 |     1 |     0 |        Low
-          EIF | int y = 2                    |     1 |     1 |     0 |        Low
-          ILF | int a                        |     1 |     1 |     0 |        Low
-          ILF | int z = x * y * y            |     1 |     1 |     0 |        Low
-           EI | int z = x * y * y            |     4 |     0 |     1 |        Low
-           EI | a = z                        |     2 |     0 |     1 |        Low
-           
+        EIF{
+                Label: int x = 1
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EIF{
+                Label: int y = 2
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EI{
+                Label: z = y (=)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     2 |     0 |     1 |        Low |
+        }
+        EO{
+                Label: x = x + y (=)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     3 |     0 |     1 |        Low |
+        }
+        EO{
+                Label: x = x > 0 ? x : y (=)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     4 |     0 |     1 |        Low |
+        }
+        EO{
+                Label: x++ (++)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     0 |     1 |        Low |
+        }
+        ILF{
+                Label: int z
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        ILF{
+                Label: int z = x
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        Unadjusted Function Points: 35
+        Value Adjustment Factor: 0.91
+        Function Point Count: 39
+
 Pattern EO has:
-         Type | Label                        |  #DET |  #RET |  #FTR | Complexity
-          EIF | double x = 1                 |     1 |     1 |     0 |        Low
-          EIF | int y = 2                    |     1 |     1 |     0 |        Low
-          ILF | int z = 3                    |     1 |     1 |     0 |        Low
-           EO | x = x * y * z                |     4 |     0 |     2 |        Low
+        EIF{
+                Label: double x = 1
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EIF{
+                Label: int y = 2
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EIF{
+                Label: int z = 3
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     1 |     1 |     0 |        Low |
+        }
+        EO{
+                Label: x = x * y * z (=)
+                |  #DET |  #RET |  #FTR | Complexity |
+                |     4 |     0 |     2 |        Low |
+        }
+        Unadjusted Function Points: 17
+        Value Adjustment Factor: 0.91
+        Function Point Count: 19
+
+
+
+Pattern ILF has:
+        0 directly connected patterns
+        0 indirectly connected patterns
+        TCC of 0
+        LCC of 0
+
+Pattern EO has:
+        0 directly connected patterns
+        0 indirectly connected patterns
+        TCC of 0
+        LCC of 0
+
+Pattern EI has:
+        0 directly connected patterns
+        0 indirectly connected patterns
+        TCC of 0
+        LCC of 0
+
+Pattern EIF has:
+        0 directly connected patterns
+        0 indirectly connected patterns
+        TCC of 0
+        LCC of 0
+
+
+
+Pattern ILF has:
+        #Operators : 80
+        #Distinct Operators : 10
+        #Operands : 7
+        #Distinct Operands : 3
+        Program Vocabulary : 13
+        Program Length : 87
+        Estimated Program Length : 37.9742
+        Volume : 321.938
+        Difficulty : 7.33333
+        Effort : 2360.88
+        Time Required : 131.16 (sec)
+        Number of Delivered Bugs : 0.059101
+
+Pattern EO has:
+        #Operators : 8
+        #Distinct Operators : 2
+        #Operands : 4
+        #Distinct Operands : 1
+        Program Vocabulary : 3
+        Program Length : 12
+        Estimated Program Length : 2
+        Volume : 19.0196
+        Difficulty : 5
+        Effort : 95.0978
+        Time Required : 5.28321 (sec)
+        Number of Delivered Bugs : 0.00694479
+
+Pattern EI has:
+        #Operators : 34
+        #Distinct Operators : 6
+        #Operands : 14
+        #Distinct Operands : 2
+        Program Vocabulary : 8
+        Program Length : 48
+        Estimated Program Length : 17.5098
+        Volume : 144
+        Difficulty : 10
+        Effort : 1440
+        Time Required : 80 (sec)
+        Number of Delivered Bugs : 0.0425063
+
+Pattern EIF has:
+        #Operators : 4
+        #Distinct Operators : 2
+        #Operands : 2
+        #Distinct Operands : 2
+        Program Vocabulary : 4
+        Program Length : 6
+        Estimated Program Length : 4
+        Volume : 12
+        Difficulty : 2
+        Effort : 24
+        Time Required : 1.33333 (sec)
+        Number of Delivered Bugs : 0.00277345
+
+Jaccard Similarity
+[0] -> {ILF }
+[1] -> {ILF }
+[2] -> {ILF }
+[3] -> {EIF }
+[4] -> {EIF }
+[5] -> {EI }
+[6] -> {EI }
+[7] -> {EI }
+[8] -> {EI }
+[9] -> {EI }
+[10] -> {EO }
+Pattern | [0]   | [1]   | [2]   | [3]   | [4]   | [5]   | [6]   | [7]   | [8]   | [9]   | [10]
+[0]     | \
+[1]     | 1.00  | \
+[2]     | 1.00  | 1.00  | \
+[3]     | 0.00  | 0.00  | 0.00  | \
+[4]     | 0.00  | 0.00  | 0.00  | 1.00  | \
+[5]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+[6]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | \
+[7]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | \
+[8]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | \
+[9]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | 1.00  | \
+[10]    | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+
+Weighted Jaccard Similarity
+[0] -> {ILF }
+[1] -> {ILF }
+[2] -> {ILF }
+[3] -> {EIF }
+[4] -> {EIF }
+[5] -> {EI }
+[6] -> {EI }
+[7] -> {EI }
+[8] -> {EI }
+[9] -> {EI }
+[10] -> {EO }
+Pattern | [0]   | [1]   | [2]   | [3]   | [4]   | [5]   | [6]   | [7]   | [8]   | [9]   | [10]
+[0]     | \
+[1]     | 1.00  | \
+[2]     | 1.00  | 1.00  | \
+[3]     | 0.00  | 0.00  | 0.00  | \
+[4]     | 0.00  | 0.00  | 0.00  | 1.00  | \
+[5]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+[6]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | \
+[7]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | \
+[8]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | \
+[9]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | 1.00  | \
+[10]    | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+
+Overlap Coefficient
+[0] -> {ILF }
+[1] -> {ILF }
+[2] -> {ILF }
+[3] -> {EIF }
+[4] -> {EIF }
+[5] -> {EI }
+[6] -> {EI }
+[7] -> {EI }
+[8] -> {EI }
+[9] -> {EI }
+[10] -> {EO }
+Pattern | [0]   | [1]   | [2]   | [3]   | [4]   | [5]   | [6]   | [7]   | [8]   | [9]   | [10]
+[0]     | \
+[1]     | 1.00  | \
+[2]     | 1.00  | 1.00  | \
+[3]     | 0.00  | 0.00  | 0.00  | \
+[4]     | 0.00  | 0.00  | 0.00  | 1.00  | \
+[5]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+[6]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | \
+[7]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | \
+[8]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | \
+[9]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | 1.00  | \
+[10]    | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+
+Cosine Similarity
+[0] -> {ILF }
+[1] -> {ILF }
+[2] -> {ILF }
+[3] -> {EIF }
+[4] -> {EIF }
+[5] -> {EI }
+[6] -> {EI }
+[7] -> {EI }
+[8] -> {EI }
+[9] -> {EI }
+[10] -> {EO }
+Pattern | [0]   | [1]   | [2]   | [3]   | [4]   | [5]   | [6]   | [7]   | [8]   | [9]   | [10]
+[0]     | \
+[1]     | 1.00  | \
+[2]     | 1.00  | 1.00  | \
+[3]     | 0.00  | 0.00  | 0.00  | \
+[4]     | 0.00  | 0.00  | 0.00  | 1.00  | \
+[5]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \
+[6]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | \
+[7]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | \
+[8]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | \
+[9]     | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 1.00  | 1.00  | 1.00  | 1.00  | \
+[10]    | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | 0.00  | \

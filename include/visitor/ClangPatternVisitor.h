@@ -25,6 +25,7 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 			//But I want to avoid undocumented sideeffects when possible
 			clang::FullSourceLoc FullSource(Source, SourceManager);
 			clang::FullSourceLoc FullTarget(Target, SourceManager);
+			//#TODO May cause issues if a line consists of multiple statements
 			return (FullSource == FullTarget);
 		}
 
@@ -35,10 +36,38 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 			);
 		}
 
+		bool IsPatternEnd(clang::CallExpr* Node, PatternCodeRegion* PatternCodeRegion){
+			clang::FunctionDecl* Callee;
+			if((Callee = Node -> getDirectCallee()) == NULL)
+				return (false);
+
+			std::string FunctionName = Callee -> getNameInfo().getName().getAsString();
+
+			if(FunctionName != PATTERN_END_CXX_FNNAME && FunctionName != PATTERN_END_C_FNNAME)
+				return (false);
+
+			//#TODO Compare the argument of the call expression with the parameters of the code region
+			return (Equals(Node, PatternCodeRegion));
+		}
+
+		bool IsPatternBegin(clang::CallExpr* Node, PatternCodeRegion* PatternCodeRegion){
+			clang::FunctionDecl* Callee;
+			if((Callee = Node -> getDirectCallee()) == NULL)
+				return (false);
+
+			std::string FunctionName = Callee -> getNameInfo().getName().getAsString();
+
+			if(FunctionName != PATTERN_BEGIN_CXX_FNNAME && FunctionName != PATTERN_BEGIN_C_FNNAME)
+				return (false);
+
+			//#TODO Compare the argument of the call expression with the parameters of the code region
+			return (Equals(Node, PatternCodeRegion));
+		}
+
 		PatternCodeRegion* GetPatternCodeRegion(clang::CallExpr* Node){
 			//#TODO maybe store the code regions in a map with their range as key?
 			for(PatternCodeRegion* CodeRegion : PatternGraph::GetInstance() -> GetAllPatternCodeRegions()){
-				if(Equals(Node, CodeRegion))
+				if(IsPatternBegin(Node, CodeRegion) || IsPatternEnd(Node, CodeRegion))
 					return (CodeRegion);
 			}
 			return (NULL);
@@ -53,7 +82,7 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 			//Call expression is either a Pattern_Begin or Pattern_End
 			if((PatternCodeRegion = GetPatternCodeRegion(Node)) != NULL){
 				//Pattern_Begin
-				if(Equals(Node -> getBeginLoc(), PatternCodeRegion -> GetStartLoc())){
+				if(IsPatternBegin(Node, PatternCodeRegion)){
 					VisitPatternCodeRegion(PatternCodeRegion);
 					VisitPatternOccurrence(PatternCodeRegion -> GetPatternOccurrence());
 					VisitParallelPattern(PatternCodeRegion -> GetPatternOccurrence() -> GetPattern());
@@ -66,7 +95,6 @@ template <typename Derived> class ClangPatternVisitor : public PatternGraphNodeV
 					return (true);
 				}
 			}
-
 			//Continue traversal if it isn't a Pattern_Begin or Pattern_End
 			return (clang::RecursiveASTVisitor<Derived>::TraverseCallExpr(Node));
 		};

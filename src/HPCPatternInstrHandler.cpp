@@ -9,8 +9,8 @@
 /*
  * Regular Expressions
  */
-std::regex BeginParallelPatternRegex("([[:alnum:]]+)\\s([[:alnum:]]+)\\s([[:alnum:]]+)");
-std::regex EndParallelPatternRegex("([[:alnum:]]+)");
+std::regex BeginParallelPatternRegex("([[:alnum:]]+)\\s([[:alnum:]]+)\\s([[:w:]]+)");
+std::regex EndParallelPatternRegex("([[:w:]]+)");
 
 
 

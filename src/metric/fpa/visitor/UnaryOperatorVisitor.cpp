@@ -24,13 +24,14 @@ bool UnaryOperatorVisitor::VisitUnaryOperator(clang::UnaryOperator* Node){
 			FunctionPoint = new ExternalOutput(
 				Visitor.det,
 				Visitor.ftr,
-				PrettyPrinter::PrintPretty(Node)
+				//Unary Operator only has a static getOpcodeStr method
+				PrettyPrinter::PrintPretty(Node) + " (" + Node -> getOpcodeStr(Node -> getOpcode()).str() + ")"
 			);
 		}else{
 			FunctionPoint = new ExternalInput(
 				Visitor.det,
 				Visitor.ftr,
-				PrettyPrinter::PrintPretty(Node)
+				PrettyPrinter::PrintPretty(Node) + " (" + Node -> getOpcodeStr(Node -> getOpcode()).str() + ")"
 			);
 		}
 

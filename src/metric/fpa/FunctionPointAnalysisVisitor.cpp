@@ -2,7 +2,6 @@
 #include "metric/fpa/visitor/DeclRefExprVisitor.h"
 #include "metric/fpa/visitor/BinaryOperatorVisitor.h"
 #include "metric/fpa/visitor/AssignmentOperatorVisitor.h"
-#include "metric/fpa/visitor/VarDeclVisitor.h"
 #include "metric/fpa/visitor/UnaryOperatorVisitor.h"
 #include "metric/fpa/visitor/AbstractConditionalOperatorVisitor.h"
 
@@ -25,7 +24,7 @@ bool FunctionPointAnalysisVisitor::TraverseDeclRefExpr(clang::DeclRefExpr* Node)
 
 bool FunctionPointAnalysisVisitor::TraverseVarDecl(clang::VarDecl* Node){
 	if(!CodeRegions.empty()){
-		VarDeclVisitor Visitor(Context, CodeRegions.back() -> GetSourceRange());
+		DeclRefExprVisitorImplementation Visitor(Context, CodeRegions.back() -> GetSourceRange());
 		Visitor.TraverseVarDecl(Node);
 
 		for(FunctionPoint* FunctionPoint : Visitor.FunctionPoints)
@@ -90,7 +89,6 @@ void FunctionPointAnalysisVisitor::EndVisitPatternCodeRegion(PatternCodeRegion* 
 		!CodeRegions.empty(),
 		std::out_of_range("Tried to remove " + PatternCodeRegion -> GetPatternOccurrence() -> GetPattern() -> GetPatternName() + " but stack was empty.")
 	);
-
 	CodeRegions.pop_back();
 }
 

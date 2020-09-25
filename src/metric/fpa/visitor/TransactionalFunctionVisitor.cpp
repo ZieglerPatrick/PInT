@@ -21,3 +21,12 @@ bool TransactionalFunctionVisitor::VisitVarDecl(clang::VarDecl* Node){
 	this -> ftr = UniqueTypes.size();
 	return (true);
 }
+
+bool TransactionalFunctionVisitor::VisitFunctionDecl(clang::FunctionDecl* Node){
+	//Include the return type (may be void)
+	UniqueTypes.emplace(PrettyPrinter::PrintPretty(Node -> getReturnType()));
+
+	this -> det++;
+	this -> ftr = UniqueTypes.size();
+	return (true);
+}

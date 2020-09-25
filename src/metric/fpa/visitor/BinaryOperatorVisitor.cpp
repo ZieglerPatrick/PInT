@@ -21,7 +21,7 @@ bool BinaryOperatorVisitor::VisitBinaryOperator(clang::BinaryOperator* Node){
 		FunctionPoint* FunctionPoint = new ExternalInput(
 				Visitor.det,
 				Visitor.ftr,
-				PrettyPrinter::PrintPretty(Node)
+				PrettyPrinter::PrintPretty(Node) + " (" + Node -> getOpcodeStr().str() + ")"
 		);
 
 		this -> FunctionPoints.push_back(FunctionPoint);;

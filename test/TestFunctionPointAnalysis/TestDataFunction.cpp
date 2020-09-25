@@ -14,9 +14,15 @@ void testInternalLogicalFile(){
 	
 	PatternInstrumentation::Pattern_Begin("Test ILF ILFVarDecl");
 	{
-		Person A(32, "Olaf");
+		Person Olaf(32, "Olaf");
 	}
 	PatternInstrumentation::Pattern_End("ILFVarDecl");
+	
+	PatternInstrumentation::Pattern_Begin("Test ILF ILFInheritance");
+	{
+		Student Beatrice("Beatrice", "gldwth");
+	}
+	PatternInstrumentation::Pattern_End("ILFInheritance");
 }
 
 void testExternalInterfaceFile(){
@@ -27,6 +33,6 @@ void testExternalInterfaceFile(){
 	}
 	PatternInstrumentation::Pattern_End("EIFDeclRefExpr");
 	
-	PatternInstrumentation::Pattern_Begin("Test Empty Empty");
+	PatternInstrumentation::Pattern_Begin("Test EIF Empty");
 	PatternInstrumentation::Pattern_End("Empty");
 }
