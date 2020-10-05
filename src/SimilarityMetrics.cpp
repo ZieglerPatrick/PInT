@@ -17,11 +17,13 @@ SimilarityMeasure::SimilarityMeasure
 		case DIR_Children:{
 			TopDownCompositionVisitor Visitor(mySimilarityCriterion);
 			this -> PatternSequences = Visitor.CalculatePatternSequences(myRootNode);
+			this -> PatternSequences = CalculateDistinctPatternSequences(this -> PatternSequences);
  			break;
 		}
 		case DIR_Parents:{
 			BottomUpCompositionVisitor Visitor(mySimilarityCriterion);
 			this -> PatternSequences = Visitor.CalculatePatternSequences(myRootNode);
+			this -> PatternSequences = CalculateDistinctPatternSequences(this -> PatternSequences);
  			break;
 		}
 		default:{
@@ -92,4 +94,25 @@ void SimilarityMeasure::Print(){
  **/
 void SimilarityMeasure::CSVExport(std::string FileName){
 	//TODO
+}
+
+std::vector<PatternSequencePointer> SimilarityMeasure::CalculateDistinctPatternSequences(std::vector<PatternSequencePointer> Source){
+	std::vector<PatternSequencePointer> Target;
+
+	for(PatternSequencePointer SourcePatternSequence : Source){
+		//Check if the current pattern sequence has already been added to Target
+		auto Entry = std::find_if(
+				Target.begin(),
+				Target.end(),
+				[&SourcePatternSequence](PatternSequencePointer& TargetPatternSequence) {
+					return (SourcePatternSequence -> PatternLabels == TargetPatternSequence -> PatternLabels);
+				}
+		);
+
+		//Entry is not in Target
+		if(Entry == Target.end())
+			Target.push_back(SourcePatternSequence);
+	}
+
+	return (Target);
 }

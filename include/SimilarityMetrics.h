@@ -58,4 +58,13 @@ class SimilarityMeasure : public HPCPatternStatistic{
  		 * Calculates the similarity between the two pattern sequences.
  		 */
 		virtual float ComputeSimilarity(PatternSequencePointer First, PatternSequencePointer Second) = 0;
+	private:
+		/**
+		 * When determining the pattern sequences in the instrumented code, we may encounter duplicates.
+		 * Comparing equal sequences is meaningless, since we expect them to be equal anyway. So to improve
+		 * readability, they should be skipped.
+		 * @param Source A vector containing all pattern sequences in the source code.
+		 * @return A vector of distinct pattern sequences.
+		 */
+		std::vector<PatternSequencePointer> CalculateDistinctPatternSequences(std::vector<PatternSequencePointer> Source);
 };
