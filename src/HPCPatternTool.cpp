@@ -8,7 +8,6 @@
 #include "metric/FunctionPointAnalysisStatistic.h"
 #include "metric/CohesionStatistic.h"
 #include "metric/HalsteadStatistic.h"
-#include <chrono>
 
 #include "similarity/CosineSimilarityStatistic.h"
 #include "similarity/JaccardSimilarityStatistic.h"
@@ -117,8 +116,6 @@ static HPCPatternStatistic* Statistics[] = {
  */
 
 int main (int argc, const char** argv){
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
 	setCommandArguments(
 			OnlyPatterns.getValue(),
 			NoTree.getValue(),
@@ -247,11 +244,7 @@ int main (int argc, const char** argv){
 		Cosine.Calculate();
 		Cosine.Print();
 
-		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
-
 		return retcode;
 	}
-
 	return 1;
 }
