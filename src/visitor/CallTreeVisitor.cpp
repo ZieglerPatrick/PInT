@@ -49,10 +49,8 @@ void CallTreeVisitor::VisitFunctionDeclaration(CallTreeNode* Node){
 	static_cast<void>(Node); //Avoid unused parameter warning
 }
 void CallTreeVisitor::TraverseFunctionDeclaration(CallTreeNode* Node){
-	auto Children = Node -> GetCallees();
-
-	for(auto Child = Children -> begin() ; Child != Children -> end() ; ++Child)
-		Child -> second -> Accept(this);
+	for(auto& Child : *Node -> GetCallees())
+		Child.second -> Accept(this);
 }
 void CallTreeVisitor::EndVisitFunctionDeclaration(CallTreeNode* Node){
 	static_cast<void>(Node); //Avoid unused parameter warning
