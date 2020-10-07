@@ -35,10 +35,8 @@ namespace GraphAlgorithms
 	 * Calculates all parent pattern code regions of the provided code regions.
 	 * @param Start The current code region.
 	 * @param Parents A reference to the vector where all found parent code regions are  stored in.
-	 * @since Sept. 13th 2020
-	 * @author Patrick Ziegler
 	 */
-	extern void FindAllParentPatternCodeRegions(PatternCodeRegion* Start, std::vector<PatternCodeRegion*>& Parents);
+	extern void FindAllParentPatternCodeRegions(PatternGraphNode* Start, std::vector<PatternCodeRegion*>& Parents);
 
 	extern void FindParentPatternCodeRegions(PatternCodeRegion* Start, std::vector<PatternCodeRegion*>& Parents, int maxdepth);
 

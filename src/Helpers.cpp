@@ -31,21 +31,30 @@ std::vector<PatternOccurrence*> PatternHelpers::GetPatternOccurrences(std::vecto
 	return PatternOccurrences;
 }
 
-void GraphAlgorithms::FindAllParentPatternCodeRegions(PatternCodeRegion* Start, std::vector<PatternCodeRegion*>& Parents){
+void GraphAlgorithms::FindAllParentPatternCodeRegions(PatternGraphNode* Start, std::vector<PatternCodeRegion*>& Parents){
 	class ParentVisitor : public PatternGraphNodeVisitor{
 		public:
 			std::vector<PatternCodeRegion*> CodeRegions;
+			/**
+			 * The pattern graph seems to have played too much CK2 and now
+			 * nodes can have their parents as their own children, which
+			 * in return may cause an infinite loop.
+			 */
+			std::set<PatternGraphNode*> Visited;
 
 			void HandlePatternCodeRegion(PatternCodeRegion* Node) override{
 				CodeRegions.push_back(Node);
-
+				Visited.emplace(Node);
 				for(PatternGraphNode* Parent : Node -> GetParents())
-					Parent -> Accept(this);
+					if(Visited.find(Parent) == Visited.end())
+						Parent -> Accept(this);
 			}
 
 			void HandleFunctionNode(FunctionNode* Node) override{
+				Visited.emplace(Node);
 				for(PatternGraphNode* Parent : Node -> GetParents())
-					Parent -> Accept(this);
+					if(Visited.find(Parent) == Visited.end())
+						Parent -> Accept(this);
 			}
 	};
 
