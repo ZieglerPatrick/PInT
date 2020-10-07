@@ -64,6 +64,9 @@ bool ObjectVisitor::WalkUpFromCXXConversionDecl(clang::CXXConversionDecl* Node){
 }
 
 bool ObjectVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* Node){
-	this -> ret += Node -> getNumBases();	//Each superclass is a potential subgroup
+	//May cause an undocumented exception if the node has no definition.
+	//Whatever the fuck that's supposed to mean...
+	if(Node -> hasDefinition())
+		this -> ret += Node -> getNumBases();	//Each superclass is a potential subgroup
 	return (true);
 }
