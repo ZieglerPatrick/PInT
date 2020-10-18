@@ -519,7 +519,7 @@ void CallTree::appendAllDeclToCallTree(CallTreeNode* Node, int maxdepth)
 	};
 
 	LinkFunctionToDeclarationVisitor Visitor(maxdepth);
-	Root -> Accept(&Visitor);
+	Node -> Accept(&Visitor);
 }
 
 void CallTree::setUpTree(){
