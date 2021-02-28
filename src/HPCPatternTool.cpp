@@ -231,18 +231,22 @@ int main (int argc, const char** argv){
 		JaccardSimilarityStatistic Jaccard(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
 		Jaccard.Calculate();
 		Jaccard.Print();
+		Jaccard.CSVExport("Jaccard.csv");
 
 		WeightedJaccardSimilarityStatistic WeightedJaccard(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
 		WeightedJaccard.Calculate();
 		WeightedJaccard.Print();
+		WeightedJaccard.CSVExport("WeightedJaccard.csv");
 
 		OverlapCoefficientStatistic Overlap(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
 		Overlap.Calculate();
 		Overlap.Print();
+		Overlap.CSVExport("Overlap.csv");
 
 		CosineSimilarityStatistic Cosine(RootNode, GraphSearchDirection::DIR_Parents, SimilarityCriterion::Pattern);
 		Cosine.Calculate();
 		Cosine.Print();
+		Cosine.CSVExport("Cosine.csv");
 
 		return retcode;
 	}

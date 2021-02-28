@@ -5,7 +5,7 @@
 
 /**
  * The set of connected patterns consists of all patterns that are reachable
- * from a given node. It includes both directly and indirectly connected patterns.
+ * from a given node.
  */
 class ConnectedPatternCounter : public PatternGraphNodeVisitor {
 	public:

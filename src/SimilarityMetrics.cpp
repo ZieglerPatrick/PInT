@@ -2,6 +2,8 @@
 #include "similarity/SimilarityPair.h"
 #include "similarity/visitor/BottomUpCompositionVisitor.h"
 #include "similarity/visitor/TopDownCompositionVisitor.h"
+#include <iostream>
+#include <fstream>
 
 SimilarityMeasure::SimilarityMeasure
 (
@@ -88,12 +90,30 @@ void SimilarityMeasure::Print(){
 }
 
 /**
- * @brief Dummy function
- *
  * @param FileName File name of the output file.
  **/
 void SimilarityMeasure::CSVExport(std::string FileName){
-	//TODO
+	std::ofstream File;
+	File.open(FileName, std::ios::app);
+
+	File << IO::CSVPrintLine(
+			"Row",
+			"Column",
+			"Similarity"
+	);
+
+	for(size_t Column = 0, Index = 0 ; Column < PatternSequences.size() ; ++Column){
+		for(size_t Row = 0 ; Row < Column ; ++Row, ++Index){
+			SimilarityPairPointer& Similarity = Similarities[Index];
+			File << IO::CSVPrintLine(
+					Similarity->Left->ToString(),
+					Similarity->Right->ToString(),
+					Similarity->Similarity
+			);
+		}
+	}
+
+	File.close();
 }
 
 std::vector<PatternSequencePointer> SimilarityMeasure::CalculateDistinctPatternSequences(std::vector<PatternSequencePointer> Source){

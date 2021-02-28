@@ -19,4 +19,6 @@ class PatternSequence{
 		 * The order in which the patterns occur is of no importance, hence a set is used.
 		 */
 		std::multiset<std::string> PatternLabels;
+
+		std::string ToString();
 };

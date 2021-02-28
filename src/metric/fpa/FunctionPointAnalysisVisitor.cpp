@@ -46,6 +46,7 @@ bool FunctionPointAnalysisVisitor::TraverseUnaryOperator(clang::UnaryOperator* N
 }
 
 bool FunctionPointAnalysisVisitor::TraverseBinaryOperator(clang::BinaryOperator* Node){
+
 	if(!CodeRegions.empty()){
 		std::vector<FunctionPoint*> FunctionPoints;
 		if(Node ->isCompoundAssignmentOp() || Node -> isAssignmentOp()){
